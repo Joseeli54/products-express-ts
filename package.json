@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.18.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
@@ -30,8 +31,11 @@
     "build": "tsc",
     "dev": "npx nodemon",
     "prod": "node dist/src/server.js",
-    "test" : "set PORT=0&&jest --watchAll --detectOpenHandles --maxWorkers=1",
-    "test:unit" : "set PORT=0&&jest --config jest.unit.config.js"
+    "test": "set PORT=0&&jest --watchAll --detectOpenHandles --maxWorkers=1",
+    "test:unit": "set PORT=0&&jest --config jest.unit.config.js"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
