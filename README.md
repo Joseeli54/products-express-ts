@@ -19,5 +19,5 @@ This is a test project used to create an example API with the Node.js tool, Type
 - #### Step 4: In the project directory this file `.env.example`, copy the file and name it `.env`. It can also be done from the terminal:
 `$ cp example.env .env`
 
-# Setting up Prisma and the PostgreSQL database
+# Configure Prisma and the PostgreSQL database
 In progres...
