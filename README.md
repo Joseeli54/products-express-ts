@@ -75,6 +75,6 @@ This will allow you to view user, product and order records easily, as well as r
 
 - Run the unit tests in the `jest.unit.config.js` file
 
- `$ npm run test:unit`
+   `$ npm run test:unit`
 
   In both commands, the `PORT` variable was configured to be 0, because we are working in test mode.
