@@ -47,7 +47,7 @@ describe('loginService: User login', () => {
         expect(result.data?.token).toBeTruthy()
     })
 
-    it('Intentar iniciar sesión con un correo electrónico no válido debería mostrar un mensaje de error', async () => {
+    it('Trying to log in with an invalid email should display an error message', async () => {
         const result : any = await loginService.login('test200', "123")
 
         expect(result.success).toBe(false)
