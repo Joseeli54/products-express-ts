@@ -4,6 +4,7 @@ import { ErrorCode } from "../exceptions/root.exception";
 
 const adminMiddleware = async(req: any, res:Response, next:NextFunction) => {
     const user = req.user
+
     if(user.role == "ADMIN"){
         next()
     }else{

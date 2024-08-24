@@ -88,7 +88,7 @@ export const listOrdersByUserId = async (req: any, res: Response) => {
 
     const serviceResult = await ordersService.getListOrderByIdUser(skip, limit, id)
 
-    if(!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
+    if(!serviceResult.success || !serviceResult.data) return res.json(serviceResult)
 
     const response: GetOrdersListDto = {
         orders: serviceResult.data.map(order => {
@@ -125,7 +125,7 @@ export const getOrderById = async (req: any, res: Response) => {
 
     const serviceResult = await ordersService.getOrderById(id)
 
-    if(!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
+    if(!serviceResult.success || !serviceResult.data) return res.json(serviceResult)
 
     const response: GetOrderDto = {
         id: serviceResult.data.id,

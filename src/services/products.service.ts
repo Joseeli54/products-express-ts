@@ -2,6 +2,7 @@ import { ErrorCode } from '../exceptions/root.exception'
 import { Result } from '../interfaces/results/results.interface'
 import { Product } from '../models/product.model'
 import { productsRepository } from '../repositories/products.repository'
+import { getProductSchema, ProductSchema, updateProductSchema } from '../schema/products.schema'
 import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
 
@@ -37,6 +38,26 @@ async function getListProducts(skip: number, limit: number): Promise<Result<Prod
 }
 
 async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>> {
+
+    try{
+        ProductSchema.parse(product)
+    }catch(err:any){
+        let errors = []
+
+        for (let index = 0; index < err.issues.length; index++) {
+            let message = err.issues[index].message;
+            errors.push(message)
+        }
+
+        return {
+            success: false,
+            message: "Could not create product due to some invalid parameters",
+            data: undefined,
+            errorCode: ErrorCode.INVALID,
+            errorType: Errors.INVALID,
+            errors: errors
+        }
+    }
 
     let productExists = await prismaClient.product.findFirst({where: { name : product.name }})
     if(productExists){
@@ -81,7 +102,27 @@ async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>
 }
 
 async function updateProductById( product: Omit<Product, 'id'>, id: string): Promise<Result<void>> {
-    // Verify that product exists
+    // Verification
+    try{
+      updateProductSchema.parse(product)
+    }catch(err:any){
+        let errors = []
+
+        for (let index = 0; index < err.issues.length; index++) {
+            let message = err.issues[index].message;
+            errors.push(message)
+        }
+
+        return {
+            success: false,
+            message: "Could not create product due to some invalid parameters",
+            data: undefined,
+            errorCode: ErrorCode.INVALID,
+            errorType: Errors.INVALID,
+            errors: errors
+        }
+    }
+
     let productExists = await prismaClient.product.findFirst({where: { id }})
     if (!productExists) {
       return {
@@ -111,7 +152,7 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
         errors: ['Product was already ordered and cannot be updated'],
         errorCode: ErrorCode.CONFLICT,
         errorType: Errors.CONFLICT,
-        message: ''
+        message: 'Product was already ordered and cannot be updated'
       }
     }
   
@@ -165,6 +206,29 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
 }
 
 async function getProductById(id: string): Promise<Result<Product | null>> {
+    //Validation
+    let data = { id : id }
+
+    try{
+      getProductSchema.parse(data)
+    }catch(err:any){
+        let errors = []
+
+        for (let index = 0; index < err.issues.length; index++) {
+            let message = err.issues[index].message;
+            errors.push(message)
+        }
+
+        return {
+            success: false,
+            message: "Could not get product due to some invalid parameters",
+            data: null,
+            errorCode: ErrorCode.INVALID,
+            errorType: Errors.INVALID,
+            errors: errors
+        }
+    }
+
     // Get product
     let product: Product | null
   
@@ -200,6 +264,29 @@ async function getProductById(id: string): Promise<Result<Product | null>> {
   }
 
   async function deleteProductById(id: string): Promise<Result<void>> {
+    //Validation
+    let data = { id : id }
+
+    try{
+      getProductSchema.parse(data)
+    }catch(err:any){
+        let errors = []
+
+        for (let index = 0; index < err.issues.length; index++) {
+            let message = err.issues[index].message;
+            errors.push(message)
+        }
+
+        return {
+            success: false,
+            message: "Could not create product due to some invalid parameters",
+            data: undefined,
+            errorCode: ErrorCode.INVALID,
+            errorType: Errors.INVALID,
+            errors: errors
+        }
+    }
+
     // Verify that product exists
     let productExists = await prismaClient.product.findFirst({where: { id }})
     if (!productExists) {

@@ -3,6 +3,7 @@ import { Result } from '../interfaces/results/results.interface'
 import { Order } from '../models/order.model'
 import { ordersRepository } from '../repositories/orders.repository'
 import { productsRepository } from '../repositories/products.repository'
+import { getOrderSchema, OrderSchema } from '../schema/orders.schema'
 import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
 
@@ -73,8 +74,7 @@ async function getListOrderByIdUser(skip: number, limit: number, userId: number)
     let count: number
 
     let user = await prismaClient.user.findFirst({where: {id: userId}})
-
-    console.log(user)
+    
     if(!user)
         return {
             success: false,
@@ -113,6 +113,29 @@ async function getListOrderByIdUser(skip: number, limit: number, userId: number)
 }
 
 async function getOrderById(id: number): Promise<Result<Order | null>> {
+  //Validation
+  let data = { id : id }
+
+  try{
+    getOrderSchema.parse(data)
+  }catch(err:any){
+      let errors = []
+
+      for (let index = 0; index < err.issues.length; index++) {
+          let message = err.issues[index].message;
+          errors.push(message)
+      }
+
+      return {
+          success: false,
+          message: "Could not get order due to some invalid parameters",
+          data: null,
+          errorCode: ErrorCode.INVALID,
+          errorType: Errors.INVALID,
+          errors: errors
+      }
+  }
+
   let order: Order | null
 
   // Get order
@@ -293,6 +316,29 @@ async function deleteOrder(id: number): Promise<Result<void>> {
 }
 
 async function updateOrder(id: number, status: string): Promise<Result<void>> {
+
+  let data = { status : status}
+  // Verification
+  try{
+    OrderSchema.parse(data)
+  }catch(err:any){
+      let errors = []
+
+      for (let index = 0; index < err.issues.length; index++) {
+          let message = err.issues[index].message;
+          errors.push(message)
+      }
+
+      return {
+          success: false,
+          message: "Could not create product due to some invalid parameters",
+          data: undefined,
+          errorCode: ErrorCode.INVALID,
+          errorType: Errors.INVALID,
+          errors: errors
+      }
+  }
+
   // Verify that order exists and that status is different from current status
   const order = await ordersRepository.getById(id)
 

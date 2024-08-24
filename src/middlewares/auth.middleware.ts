@@ -13,8 +13,6 @@ const authMiddleware = async(req: any, res:Response, next:NextFunction) => {
         next(new UnauthorizedException('Unauthorized', ErrorCode.UNAUTHORIZED))
     }
     try{
-
-        console.log(token)
         //3. if the token is present, verify that toker and extract the payload
         const payload = jwt.verify(token, JWT_SECRET) as any
         //4. to get the user from the apyload

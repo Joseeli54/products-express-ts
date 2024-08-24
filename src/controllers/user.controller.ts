@@ -23,8 +23,8 @@ export const listUsers = async (req: Request, res: Response) => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                createdAt: user.createdAt,
-                updatedAt: user.updatedAt,
+                createdAt: user.createdAt!,
+                updatedAt: user.updatedAt!,
                 role: user.role
             }
         })
@@ -44,16 +44,14 @@ export const getUserById = async (req: Request, res: Response) => {
       name: serviceResult.data.name,
       email: serviceResult.data.email,
       role: serviceResult.data.role,
-      createdAt: serviceResult.data.createdAt,
-      updatedAt: serviceResult.data.updatedAt,
+      createdAt: serviceResult.data.createdAt!,
+      updatedAt: serviceResult.data.updatedAt!,
     }
   
     res.json(response)
 }
 
 export const createUser = async (req: Request, res: Response) => {
-    SignUpSchema.parse(req.body)
-    
     const body: CreateUserDto = req.body
     const serviceResult = await usersService.createUser(body, body.password)
     res.json(serviceResult)

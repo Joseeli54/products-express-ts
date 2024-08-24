@@ -5,6 +5,7 @@ import { User } from '../models/users.model'
 import { usersRepository } from '../repositories/users.repository'
 import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
+import { SignUpSchema, updateUserSchema } from '../schema/users.schema'
 
 async function getListOrders(skip: number, limit: number): Promise<Result<User[]>> {
     let users: User[]
@@ -73,6 +74,31 @@ async function getUserById(id: number): Promise<Result<User | null>> {
 }
 
 async function createUser(user: Omit<User, 'id' | 'password'>, password: string): Promise<Result<void>> {
+
+    let data = { name: user.name, email: user.email, role : user.role, password : password }
+
+    try{
+        SignUpSchema.parse(data)
+    }catch(err:any){
+        let errors = []
+
+        for (let index = 0; index < err.issues.length; index++) {
+            let message = err.issues[index].message;
+            errors.push(message)
+        }
+
+        console.log(errors)
+
+        return {
+            success: false,
+            message: "Could not create user due to some invalid parameters",
+            data: undefined,
+            errorCode: ErrorCode.INVALID,
+            errorType: Errors.INVALID,
+            errors: errors
+        }
+    }
+
     // Verify that user by the same email does not already exist
     let hasUser = await prismaClient.user.findFirst({where: {email: user.email}})
     if (hasUser) {
@@ -116,7 +142,28 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
     }
 }
 
-async function updateUser(id: number, user: Omit<User, 'id' | 'passwordHash'>,password: string): Promise<Result<void>> {
+async function updateUser(id: number, user: Omit<User, 'id' | 'password'>,password: string): Promise<Result<void>> {
+
+    try{
+        updateUserSchema.parse(user)
+    }catch(err:any){
+        let errors = []
+
+        for (let index = 0; index < err.issues.length; index++) {
+            let message = err.issues[index].message;
+            errors.push(message)
+        }
+
+        return {
+            success: false,
+            message: "Could not create user due to some invalid parameters",
+            data: undefined,
+            errorCode: ErrorCode.INVALID,
+            errorType: Errors.INVALID,
+            errors: errors
+        }
+    }
+
     // Verify user exists
     let hasUser = await prismaClient.user.findFirst({where: {id}})
     if (!hasUser) {

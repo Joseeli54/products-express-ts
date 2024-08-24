@@ -12,8 +12,9 @@ export const errorHandler = (method: Function) => {
             if(error instanceof HttpException){
                 exception = error;
             }else{
-                exception = new InternalException('Something went wrong!', error, ErrorCode.INTERNAL_EXCEPTION)
+                exception = new InternalException('Somethings went wrong!', error, ErrorCode.INTERNAL_EXCEPTION)
             }
+            
             next(exception)
         }
     }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { prismaClient } from "../server";
 import { ProductSchema } from "../schema/products.schema";
 import { NotFoundException } from "../exceptions/not-found.exception";
-import { ErrorCode } from "../exceptions/root.exception";
+import { ErrorCode, HttpException } from "../exceptions/root.exception";
 import { productsService } from "../services/products.service";
 import { GetListProductsResponseDto } from "../interfaces/dto/products/get-list-products-dto.interface";
 import { CreateProductRequestDto } from "../interfaces/dto/products/create-product-dto.interface";
@@ -27,14 +27,12 @@ export const listProduct = async (req: Request, res: Response, next: NextFunctio
 }
 
 export const createProduct = async (req: Request, res: Response) => {
-    ProductSchema.parse(req.body)
-
     try{
         const body : CreateProductRequestDto = req.body
         const serviceResult = await productsService.createProduct(body)
         res.json(serviceResult)
     } catch(err){
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
+        throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
     }
 }
 

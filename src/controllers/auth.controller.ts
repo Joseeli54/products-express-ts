@@ -1,52 +1,50 @@
 import { NextFunction, Request, Response } from "express"
-import { prismaClient } from "../server";
-import { hashSync, compareSync} from "bcrypt";
-import * as jwt from 'jsonwebtoken'
-import { JWT_SECRET } from "../secrets";
-import { BadRequestsException } from "../exceptions/bad-request.exception";
-import { ErrorCode } from "../exceptions/root.exception";
-import { UnprocessableEntity } from "../exceptions/validation.exception";
 import { SignUpSchema } from "../schema/users.schema";
-import { NotFoundException } from "../exceptions/not-found.exception";
+import { loginService } from "../services/Auth/login.service";
+import { signUpService } from "../services/Auth/signup.service";
+import { ErrorCode, HttpException } from "../exceptions/root.exception";
+import { InternalException } from "../exceptions/internal-exception.exception";
+import { loginSchema } from "../schema/login.schema";
 
-export const signup = async (req: Request, res: Response, next: NextFunction) => {
-    SignUpSchema.parse(req.body)
-    const {email, password, name} = req.body;
-
-    let user = await prismaClient.user.findFirst({where: {email}})
-    if(user){
-        throw new BadRequestsException('User already exists', ErrorCode.USER_ALREADY_EXISTS)
+export const signup = async (req: Request, res: Response) => {
+    const { password } = req.body
+    try{
+        const user = await signUpService.signUp(req.body, password)
+        res.json(user)
+    } catch(err){
+        throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
     }
-    user = await prismaClient.user.create({
-        data: {
-            name,
-            email,
-            password: hashSync(password, 10)
-        }
-    })
-    res.json(user)
 }
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+export const login = async (req: Request, res: Response) => {
     const {email, password} = req.body;
+    try{
+        const response = await loginService.login(email, password)
 
-    let user = await prismaClient.user.findFirst({where: {email}})
-    if(!user){
-        throw new NotFoundException('User not found.', ErrorCode.USER_NOT_FOUND)
+        if(response.data?.token != undefined && response.data?.user != undefined){
+            let token = response.data?.token
+            let user = response.data?.user
+
+            return res
+            .cookie('JWT', token, {
+                                        httpOnly: true, 
+                                        sameSite: process.env.NODE_ENV == 'production' ? 'strict' : 'lax',
+                                        secure: process.env.NODE_ENV == 'production',
+                                        path: '/',
+                                        maxAge: 1000 * 60 * 60 * Number(process.env.COOKIES_EXPIRES_HOURS)
+                                  }
+            )
+            .status(200)
+            .send({ user })
+        }else{
+            return res.send(response)
+        }
+    } catch(err){
+        throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
     }
-
-    if(!compareSync(password, user!.password)){
-        throw new BadRequestsException('Incorrect password!', ErrorCode.INCORRECT_PASSWORD)
-    }
-
-    const token = jwt.sign({
-        userId: user!.id
-    }, JWT_SECRET)
-
-    res.json({user, token})
 }
 
-// /me -> return the logged in user
-export const me = async (req: any, res: Response) => {
+// /profile -> return the logged in user
+export const profile = async (req: any, res: Response) => {
     res.json(req.user)
 }
