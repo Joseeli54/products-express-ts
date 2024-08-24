@@ -32,11 +32,11 @@ beforeEach(() => {
 })
 
 describe('users', () => {
-    it('If we send incomplete data, an error message should be sent indicating this.', async () => {
+    it('If we send data that is invalid or does not meet the conditions, an error message must be sent indicating this.', async () => {
         const result = await usersService.createUser(user, "")
 
         expect(result.success).toBe(false)
-        expect(result.errorCode).toBe(407)
+        expect(result.errorCode).toBe(507)
         expect(result.errors).toStrictEqual(["String must contain at least 6 character(s)"])
     })
 
@@ -58,6 +58,4 @@ describe('users', () => {
             ])
         })
     })
-
-
 })

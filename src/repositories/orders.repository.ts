@@ -17,7 +17,7 @@ async function countByUserId(userId: number): Promise<number> {
   
 async function getAll(): Promise<Order[]> {
     // include orderProducts and include products inside orderProducts
-    const pOrders = await prismaClient.order.findMany({
+    const orders = await prismaClient.order.findMany({
         include: {
             OrderDetail: {
                 include: {
@@ -27,15 +27,15 @@ async function getAll(): Promise<Order[]> {
         }
     })
 
-    return pOrders.map(pOrder => {
+    return orders.map(order => {
         return {
-        ...pOrder
+        ...order
         }
     })
 }
 
 async function getRange(skip: number, take: number): Promise<Order[]> {
-    const pOrders = await prismaClient.order.findMany({
+    const orders = await prismaClient.order.findMany({
         skip,
         take,
         include: {
@@ -47,15 +47,15 @@ async function getRange(skip: number, take: number): Promise<Order[]> {
         }
       })
     
-      return pOrders.map(pOrder => {
+      return orders.map(order => {
         return {
-          ...pOrder
+          ...order
         }
       })
 }
 
 async function getAllByUserId(userId: number): Promise<Order[]> {
-    const pOrders = await prismaClient.order.findMany({
+    const orders = await prismaClient.order.findMany({
       where: {
         userId
       },
@@ -68,15 +68,15 @@ async function getAllByUserId(userId: number): Promise<Order[]> {
       }
     })
   
-    return pOrders.map(pOrder => {
+    return orders.map(order => {
       return {
-        ...pOrder,
+        ...order,
       }
     })
 }
 
 async function getRangeByUserId(skip: number, take: number, userId: number): Promise<Order[]> {
-    const pOrders = await prismaClient.order.findMany({
+    const orders = await prismaClient.order.findMany({
       where: {
         userId
       },
@@ -91,15 +91,15 @@ async function getRangeByUserId(skip: number, take: number, userId: number): Pro
       }
     })
   
-    return pOrders.map(pOrder => {
+    return orders.map(order => {
       return {
-        ...pOrder,
+        ...order,
       }
     })
 }
 
 async function getById(id: number): Promise<Order | null> {
-    const pOrder = await prismaClient.order.findUnique({
+    const order = await prismaClient.order.findUnique({
       where: {
         id
       },
@@ -112,10 +112,10 @@ async function getById(id: number): Promise<Order | null> {
       }
     })
   
-    if (!pOrder) return null
+    if (!order) return null
   
     return {
-      ...pOrder,
+      ...order,
     }
 }
 

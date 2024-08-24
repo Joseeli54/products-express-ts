@@ -71,7 +71,7 @@ async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>
         }
     }
   
-    const productToSave: Omit<Product, 'id'> = {
+    const saveProduct: Omit<Product, 'id'> = {
       name: product.name,
       description: product.description,
       price: product.price,
@@ -82,7 +82,7 @@ async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>
   
     // Create product
     try {
-      await productsRepository.create(productToSave)
+      await productsRepository.create(saveProduct)
     } catch {
       return {
         success: false,

@@ -39,19 +39,24 @@ describe('products', () =>{
     describe('get product route', () =>{
 
         describe('productService: product not complete', () => {
-            it('Should return 500 when product data is incomplete', async () => {
+            it('Should return 507 when product data is incomplete', async () => {
                 const result = await productsService.createProduct(productDataIncomplete)
 
-                expect(result.errorCode != undefined).toBe(true)
+                expect(result.errorCode).toBe(507)
+                expect(result.success).toBe(false)
+                expect(result.errorType).toBe("INVALID")
             })
         })
 
         describe('productService: Products with the same name', () => {
-            it('It shouldnt let me create a product with the same name and give me a 400 error code.', async () => {
+            it('It shouldnt let me create a product with the same name and give me a 501 error code.', async () => {
                 const result = await productsService.createProduct(alreadyNameProduct)
 
                 expect(result.success).toBe(false)
-                expect(result.errorCode).toBe(400)
+                expect(result.errorCode).toBe(501)
+                expect(result.errors).toStrictEqual([
+                    "Already Exists"
+                ])
             })
         })
 

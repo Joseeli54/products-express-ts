@@ -25,11 +25,11 @@ beforeEach(() => {
 })
 
 describe('loginService: User login', () => {
-    it('User logging in with invalid password, should mark the error, return false, and error code 400', async () => {
+    it('User logging in with invalid password, should mark the error, return false, and error code 502', async () => {
         const result = await loginService.login(userLogin.email, 'Incorrect123')
 
         expect(result.success).toBe(false)
-        expect(result.errorCode).toBe(400)
+        expect(result.errorCode).toBe(502)
         expect(result.errors?.length! > 0).toBe(true)
     })
 
@@ -47,7 +47,7 @@ describe('loginService: User login', () => {
         expect(result.data?.token).toBeTruthy()
     })
 
-    it('Trying to log in with an invalid email should display an error message', async () => {
+    it('Trying to log in with an invalid email and password should display an error message', async () => {
         const result : any = await loginService.login('test200', "123")
 
         expect(result.success).toBe(false)

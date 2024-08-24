@@ -112,7 +112,7 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
       }
     }
   
-    const userToSave: Omit<User, 'id'> = {
+    const saveUser: Omit<User, 'id'> = {
       name: user.name,
       email: user.email,
       role: user.role,
@@ -123,7 +123,7 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
   
     // Create user
     try {
-      await usersRepository.create(userToSave)
+      await usersRepository.create(saveUser)
     } catch (error) {
       return {
         success: false,
@@ -196,9 +196,9 @@ async function updateUser(id: number, user: Omit<User, 'id' | 'password'>,passwo
       }
     }
 
-    let userToSave: any
+    let saveUser: any
     if(password != undefined){
-        userToSave = {
+        saveUser = {
             name: user.name,
             email: user.email,
             role: user.role,
@@ -207,7 +207,7 @@ async function updateUser(id: number, user: Omit<User, 'id' | 'password'>,passwo
             updatedAt: new Date()
         }
     }else{
-        userToSave = {
+        saveUser = {
             name: user.name,
             email: user.email,
             role: user.role,
@@ -218,7 +218,7 @@ async function updateUser(id: number, user: Omit<User, 'id' | 'password'>,passwo
   
     // Update user
     try {
-      await usersRepository.update(id, userToSave)
+      await usersRepository.update(id, saveUser)
     } catch {
       return {
         success: false,

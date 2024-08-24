@@ -238,7 +238,7 @@ async function createOrder( products: {id: string, count_products: number}[],aut
       orderDetail.count = product.count
     }
   
-    const orderToSave = {
+    const saveOrder = {
       status: 'Pending',
       userId: authUser.id,
       createdAt: new Date(),
@@ -254,7 +254,7 @@ async function createOrder( products: {id: string, count_products: number}[],aut
   
     // Create order
     try {
-      await ordersRepository.create(orderToSave)
+      await ordersRepository.create(saveOrder)
   
       // Update product quantities
       for (const orderDetail of orderDetails) {
