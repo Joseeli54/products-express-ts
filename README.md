@@ -8,7 +8,7 @@ This is a test project used to create an example API with the Node.js tool, Type
 - Install any tool that allows you to read the code and execute it from a terminal (PowerShell can also be used)
 - Install the latest version of [PostgreSQ](https://www.postgresql.org/ "PostgreSQ").
 - Install [Git](https://git-scm.com/downloads "Git") on your local machine, to clone the current repository.
-- For testing Http requests, it is recommended to also install [Postman](https://www.postman.com/downloads/ "Postman")(For testing Http requests, it is recommended to also install Postman. "Postman"). Where the `products-express-ts.postman_collection.json` file will be executed.
+- For testing Http requests, it is recommended to also install [Postman](https://www.postman.com/downloads/ "Postman"). Where the `products-express-ts.postman_collection.json` file will be executed.
 
 # Installation steps
 - #### Step 1: Create a new directory where you will clone the project, open a terminal positioned in that directory and run:
@@ -63,6 +63,18 @@ This will allow you to view user, product and order records easily, as well as r
 # Running API in production mode
 - To run the application in production mode, execute the following command:
 
-`$npm run prod`
+  `$ npm run prod`
 
   Once this command is executed, a port will be opened to make HTTP requests. This port is configured in the `.env` file in the `PORT` variable. The generated route should be the following: `http://localhost:PORT`
+
+# Running the tests in the API
+
+- Run all the tests carried out to verify that the functionality is executed correctly:
+
+  `$ npm run test`
+
+- Run the unit tests in the `jest.unit.config.js` file
+
+ `$ npm run test:unit`
+
+  In both commands, the `PORT` variable was configured to be 0, because we are working in test mode.
