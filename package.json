@@ -31,7 +31,7 @@
     "build": "tsc",
     "dev": "npx nodemon",
     "prod": "node dist/src/server.js",
-    "test": "set PORT=0&&jest --watchAll --detectOpenHandles --maxWorkers=1",
+    "test": "set PORT=0&&jest --config jest.config.js",
     "test:unit": "set PORT=0&&jest --config jest.unit.config.js"
   },
   "prisma": {

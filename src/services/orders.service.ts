@@ -42,6 +42,7 @@ async function getListOrdersCurrentUser(skip: number, limit: number, authUser: a
     let orders: Order[]
     let count: number
   
+    //The variable id of the current server user is taken, which was saved by the User Authentication Middleware.
     try {
       orders = await ordersRepository.getRangeByUserId(skip, limit, authUser.id)
       count = await ordersRepository.countByUserId(authUser.id)
@@ -75,6 +76,7 @@ async function getListOrderByIdUser(skip: number, limit: number, userId: number)
 
     let user = await prismaClient.user.findFirst({where: {id: userId}})
     
+    //If the user no exist, then return NOT_FOUND
     if(!user)
         return {
             success: false,
@@ -85,6 +87,7 @@ async function getListOrderByIdUser(skip: number, limit: number, userId: number)
             message: "Unable to get orders, because the user does not exist."
         }
 
+    //In this try, get orders with the pagination specify by the client app.
     try {
         orders = await ordersRepository.getRangeByUserId(skip, limit, userId)
         count = await ordersRepository.countByUserId(userId)
@@ -113,7 +116,8 @@ async function getListOrderByIdUser(skip: number, limit: number, userId: number)
 }
 
 async function getOrderById(id: number): Promise<Result<Order | null>> {
-  //Validation
+  /////////////////////// Validation /////////////////////////
+  // Validation if the id order exists or is the correct format
   let data = { id : id }
 
   try{
@@ -138,6 +142,7 @@ async function getOrderById(id: number): Promise<Result<Order | null>> {
 
   let order: Order | null
 
+  /////////////////// Procesing ///////////////////
   // Get order
   try {
     order = await ordersRepository.getById(id)
@@ -152,6 +157,7 @@ async function getOrderById(id: number): Promise<Result<Order | null>> {
     }
   }
 
+  // If the order is not exists, return error NOT_FOUND
   if (!order) {
     return {
       success: false,
@@ -296,7 +302,8 @@ async function createOrder( products: {id: string, count_products: number}[],aut
 
 async function deleteOrder(id: number): Promise<Result<void>> {
 
-  // Verify that of the orden is existing
+  //////////////// Validation //////////////////
+  // If the order exist, then process to delete of the order
   const order = await ordersRepository.getById(id)
   if (!order) {
     return {
@@ -309,6 +316,7 @@ async function deleteOrder(id: number): Promise<Result<void>> {
     }
   }
 
+  //////////////// Processing /////////////
   // Delete order
   try {
     await ordersRepository.remove(id)
