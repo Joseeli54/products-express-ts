@@ -69,6 +69,7 @@ export const getProductById = async (req: Request, res: Response, next: NextFunc
             description: serviceResult.data.description,
             price: serviceResult.data.price,
             count: serviceResult.data.count,
+            availability: serviceResult.data.availability,
             createdAt: serviceResult.data.createdAt,
             updatedAt: serviceResult.data.updatedAt
         }

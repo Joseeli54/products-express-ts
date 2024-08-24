@@ -11,7 +11,8 @@ export const updateProductSchema = z.object({
     name: z.string().optional(),
     description: z.string().optional(),
     price: z.number().min(0).optional(),
-    count: z.number().min(0).optional()
+    count: z.number().min(0).optional(),
+    availability: z.enum(['Available', 'Not available']),
 })
 
 export const getProductSchema = z.object({

@@ -60,6 +60,17 @@ async function updateQuantityById(id: string, count: number): Promise<void> {
   })
 }
 
+async function updateAvailability(id: string, availability: string): Promise<void> {
+  await prismaClient.product.update({
+    where: {
+      id
+    },
+    data: {
+      availability
+    }
+  })
+}
+
 async function updatePriceById(id: string, price: number): Promise<void> {
   await prismaClient.product.update({
     where: {
@@ -81,4 +92,5 @@ export const productsRepository = {
   removeById,
   updateQuantityById,
   updatePriceById,
+  updateAvailability
 }
