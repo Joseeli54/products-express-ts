@@ -85,3 +85,20 @@ This will allow you to view user, product and order records easily, as well as r
    `$ npm run test:unit`
 
   In both commands, the `PORT` variable was configured to be 0, because we are working in test mode.
+
+# Source code editor and compiler
+
+- The Visual Studio Code text editor was used.
+- Additionally, the Prisma extension was installed in the tool to improve the syntax format.
+- The API was compiled, along with Prisma Studio and the tests within this source code editor.
+
+# Installed dependencies
+
+- Express.js: v4.19.2 or higher
+- Prisma: v5.18.0 or higher
+- Node.js: v20.11.1 or higher
+- Jest: v29.7.0 or higher
+- Typescript: v5.3.3 or higher
+- PostgreSQL: v16.4 or higher
+- Zod: v3.23.8 or higher
+- npm: v6.14.10 or higher
