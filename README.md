@@ -26,21 +26,21 @@ To configure the database you need to have PostgreSQL installed previously.
 
 `CREATE DATABASE express_ts WITH ENCODING 'UTF8';`
 
--  In the `.env` file there is a variable called DATABASE_URL, here the url that will link to the Prisma tool is specified. `user` **(your username)**, `password` **(your password)**, `port` ** (5432)** and `db_name` **(express_ts)** of the PostgreSQL driver must be specified.
+-  In the `.env` file there is a variable called DATABASE_URL, here the url that will link to the Prisma tool is specified. `user` **(your username)**, `password` **(your password)**, `port` **(5432)** and `db_name` **(express_ts)** of the PostgreSQL driver must be specified.
 
 `DATABASE_URL="postgresql://user:password@localhost:port/db_name"`
 
 - After specifying the handler data and the url, proceed to execute the following command to migrate the database tables with the help of Prisma ORM tool:
 
-`$npx prisma migrate dev`
+`$ npx prisma migrate dev`
 
 - The database is loaded with seeds data of test users and products for the development environment. (It is recommended not to use this in production, since some of the test users are administrators). Proceed to execute the following command:
 
-`$npx prisma db seed`
+`$ npx prisma db seed`
 
 # Running Prisma Studio
 After migrating the tables and their data to `express_ts`, you can display the tables in Prisma Studio by executing the following command in the project folder:
 
-`npx prism studio` 
+`$ npx prisma studio` 
 
 This will allow you to view user, product and order records easily, as well as remove and modify them for test cases.
