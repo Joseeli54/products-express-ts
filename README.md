@@ -28,8 +28,8 @@ To configure the database you need to have PostgreSQL installed previously.
   `CREATE DATABASE express_ts WITH ENCODING 'UTF8';`
 
 -  In the `.env` file there is a variable called DATABASE_URL, here the url that will link to the Prisma tool is specified. `user` **(your username)**, `password` **(your password)**, `port` **(5432)** and `db_name` **(express_ts)** of the PostgreSQL driver must be specified.
-  
-  `DATABASE_URL="postgresql://user:password@localhost:port/db_name"`
+
+    `DATABASE_URL="postgresql://user:password@localhost:port/db_name"`
 
 - After specifying the handler data and the url, proceed to execute the following command to migrate the database tables with the help of Prisma ORM tool:
 
