@@ -172,60 +172,69 @@ async function getOrderById(id: number): Promise<Result<Order | null>> {
 
 
 async function createOrder( products: {id: string, count_products: number}[],authUser: any): Promise<Result<void>> {
-    // Validation
+    /////////////////////// Validation /////////////////////////
+    // In this part, they perform validations where it is verified 
+    // if the array is null, if there is any duplicate product within the array
+    // and if the formats are compatible.
+
     const errors: string[] = []
   
+    // Verify that the array is not empty
     if (!Array.isArray(products) || products.length === 0)
-        errors.push('Products array is empty or missing\n')
+        errors.push('The product array is empty or not available in the request\n')
   
-    // Verify for duplicated ids
+    // Verify that the products variable is not an empty array and if its format is correctly an array.
     const uniqueIds = new Set(products.map(p => p.id))
     if (uniqueIds.size !== products.length) {
-        errors.push('Duplicate product ids found in the products array\n')
+        errors.push('There are products with duplicate identifiers. The request cannot be processed.\n')
     }
 
+    // If there errors, then return error CONFLICT
     if (errors.length > 0) {
         return {
           success: false,
           errors,
           data: undefined,
-          errorCode: ErrorCode.CONFLICT,
-          errorType: Errors.CONFLICT,
+          errorCode: ErrorCode.INVALID,
+          errorType: Errors.INVALID,
           message: `The order could not be created due to these validation errors: ${errors}`
         }
     }
-  
-    // initialize products unit price and stock
+
+    /////////////////////// Initialization and processing /////////////////////////
+    // Initialize the order details, along with the count of products to be obtained, 
+    // and the available product count.
     const orderDetails = products.map(p => {
       return {
-        id: p.id,
+        idProduct: p.id,
         count_products: p.count_products,
-        count: 0,
-        price: 0
+        count: 0, //Firstly assign zero to count
+        price: 0  //Firstly assign zero to price
       }
     })
   
-    // Verify that all products exist and have enough stock for required quantity
+    // A cycle is made to verify that the products exist, as well as verify that 
+    // there are products available for the specified count.
     for (const orderDetail of orderDetails) {
-      const product = await productsRepository.getById(orderDetail.id)
+      const product = await productsRepository.getById(orderDetail.idProduct)
   
       if (!product) {
         return {
           success: false,
           data: undefined,
-          errors: [`Product with id ${orderDetail.id} not found`],
+          errors: [`Product with id ${orderDetail.idProduct} not found`],
           errorCode: ErrorCode.USER_NOT_FOUND,
           errorType: Errors.NOT_FOUND,
           message: 'The order could not be created because the product was not found.'
         }
       }
   
-      if (product.count < orderDetail.count) {
+      if (product.count < orderDetail.count_products) {
         return {
           success: false,
           data: undefined,
           errors: [
-            `Product with id ${orderDetail.id} does not have enough available stock (current stock = ${product.count})`
+            `The product with the identifier ${orderDetail.idProduct} does not have enough stock, therefore, it is not available to be obtained. (current stock = ${product.count})`
           ],
           errorCode: ErrorCode.UNPROCESSABLE_ENTITY,
           errorType: Errors.UNPROCESSABLE_ENTITY,
@@ -233,19 +242,19 @@ async function createOrder( products: {id: string, count_products: number}[],aut
         }
       }
   
-      // if valid item, add unitPrice and stock to orderDetail
+      //If there has been no error. The value of the price and the quantity of the stock is assigned
       orderDetail.price = product.price
       orderDetail.count = product.count
     }
   
     const saveOrder = {
-      status: 'Pending',
+      status: 'Pending', //I initialize the order status by placing it as 'Pending'
       userId: authUser.id,
       createdAt: new Date(),
       updatedAt: new Date(),
       OrderDetail: orderDetails.map(p => {
         return {
-          productId: p.id,
+          productId: p.idProduct,
           count: p.count,
           price: p.price
         }
@@ -256,10 +265,16 @@ async function createOrder( products: {id: string, count_products: number}[],aut
     try {
       await ordersRepository.create(saveOrder)
   
-      // Update product quantities
+      // Update product stock
       for (const orderDetail of orderDetails) {
         const remainingStock = orderDetail.count - orderDetail.count_products
-        await productsRepository.updateQuantityById(orderDetail.id, remainingStock)
+        await productsRepository.updateQuantityById(orderDetail.idProduct, remainingStock)
+
+        //if count of stock is 0, then is not available product
+        if(remainingStock == 0){
+          await productsRepository.updateAvailability(orderDetail.idProduct, "Not available")
+        }
+
       }
     } catch {
       return {
@@ -281,7 +296,7 @@ async function createOrder( products: {id: string, count_products: number}[],aut
 
 async function deleteOrder(id: number): Promise<Result<void>> {
 
-  // Verify that order exists
+  // Verify that of the orden is existing
   const order = await ordersRepository.getById(id)
   if (!order) {
     return {
@@ -318,7 +333,10 @@ async function deleteOrder(id: number): Promise<Result<void>> {
 async function updateOrder(id: number, status: string): Promise<Result<void>> {
 
   let data = { status : status}
-  // Verification
+
+  /////////////////////// Validation /////////////////////////
+  // Verification at status of the orders. This status should be 'Pending', 'In Progress' or 'Completed'
+  
   try{
     OrderSchema.parse(data)
   }catch(err:any){
@@ -339,7 +357,8 @@ async function updateOrder(id: number, status: string): Promise<Result<void>> {
       }
   }
 
-  // Verify that order exists and that status is different from current status
+  /////////////////////// Processing /////////////////////////
+  // If the order exists, we can proceed, if not, then an error is returned.
   const order = await ordersRepository.getById(id)
 
   if (!order) {
@@ -364,7 +383,7 @@ async function updateOrder(id: number, status: string): Promise<Result<void>> {
     }
   }
 
-  // Update order status
+  // Updating the status of the order and its modification date
   try {
     await ordersRepository.update(id, status, new Date())
   } catch {

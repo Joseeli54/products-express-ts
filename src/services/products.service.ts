@@ -76,6 +76,7 @@ async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>
       description: product.description,
       price: product.price,
       count: product.count,
+      availability: "Available",
       createdAt: product.createdAt,
       updatedAt: product.updatedAt
     }
@@ -175,18 +176,19 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
       }
     }
   
-    const productToSave: Omit<Product, 'id'> = {
+    const productSave: Omit<Product, 'id'> = {
       name: product.name,
       description: product.description,
       price: product.price,
       count: product.count,
+      availability: product.availability,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt
     }
   
     // Update product
     try {
-      await productsRepository.updateById(id, productToSave)
+      await productsRepository.updateById(id, productSave)
     } catch {
       return {
         success: false,

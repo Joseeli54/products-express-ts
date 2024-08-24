@@ -3,6 +3,7 @@ export interface GetListProductsResponseDto {
       id: string
       name: string
       description: string
+      availability: string
       price: number
       count: number
     }[]

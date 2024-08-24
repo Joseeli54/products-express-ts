@@ -51,6 +51,7 @@ export const productSeed: Product[] = [
         description: "German brand vehicle",
         count: 3,
         price: 15000.00,
+        availability: "Available",
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -60,6 +61,7 @@ export const productSeed: Product[] = [
         description: "Black titanium, white titanium, blue titanium, natural titanium",
         count: 10,
         price: 1199.99,
+        availability: "Available",
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -69,6 +71,7 @@ export const productSeed: Product[] = [
         description: "Energy drinks that you can use to train physically.",
         count: 50,
         price: 2.99,
+        availability: "Available",
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -77,6 +80,7 @@ export const productSeed: Product[] = [
         name: "Canned food",
         description: "Sardine, tuna, canned meat, among others.",
         count: 100,
+        availability: "Available",
         price: 3,
         createdAt: new Date(),
         updatedAt: new Date()
