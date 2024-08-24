@@ -52,3 +52,10 @@ This will allow you to view user, product and order records easily, as well as r
   `$ npm run dev`
   
   Once this command is executed, a port will be opened to make HTTP requests. This port is configured in the `.env` file in the `PORT` variable. The generated route should be the following: `http://localhost:PORT`
+
+# Running Build on the API for generate production build.
+- To create an optimized production build for this application, run the following command:
+
+  `$npm run build`
+
+- A directory called `/dist` will be created, where the API will be executed in production mode.
