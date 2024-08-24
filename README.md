@@ -10,11 +10,11 @@ This is a test project used to create an example API with the Node.js tool, Type
 - Install [Git](https://git-scm.com/downloads "Git") on your local machine, to clone the current repository.
 
 # Installation steps
-- ##### Step 1: Create a new directory where you will clone the project, open a terminal positioned in that directory and run:
+- #### Step 1: Create a new directory where you will clone the project, open a terminal positioned in that directory and run:
 `$ git clone https://github.com/Joseeli54/products-express-ts.git`
-- ##### Step 2: Redirect your location to that cloned folder from the terminal:
+- #### Step 2: Redirect your location to that cloned folder from the terminal:
 `$ cd /path/to/products-express-ts`
-- ##### Step 3: Install the dependencies required for API execution:
+- #### Step 3: Install the dependencies required for API execution:
 `$ npm install`
-- ##### Step 4: In the project directory this file `.env.example`, copy the file and name it `.env`. It can also be done from the terminal:
+- #### Step 4: In the project directory this file `.env.example`, copy the file and name it `.env`. It can also be done from the terminal:
 `$ cp example.env .env`
