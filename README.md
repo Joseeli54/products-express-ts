@@ -51,7 +51,7 @@ To configure the database you need to have PostgreSQL installed previously.
 
   `$ npx prisma studio` 
 
-This will allow you to view user, product and order records easily, as well as remove and modify them for test cases.
+  This will allow you to easily view user, product, and order records, as well as search, delete, or modify them for test cases. When you execute the command, the following path will open: `http://localhost:5555`
 
 # ▶️ Running API in development mode
 - To run the API in developer mode, you must execute the following command at the prompt:
