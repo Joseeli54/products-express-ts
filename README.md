@@ -94,7 +94,7 @@ This will allow you to view user, product and order records easily, as well as r
 
 - Now, the project must be run in development mode:
 
-  `$npm run dev`
+  `$ npm run dev`
 
   Once the API is executed, you must enter the path `http://localhost:PORT/docs` to see the API document, whose `PORT` is the one configured in the `.env` file.
 
