@@ -24,4 +24,4 @@ app.get('/', (req, res) => {
     res.send('Welcome to the server management products!')
 })
 
-app.listen(PORT, () => { console.log(`http://localhost: ${PORT}`) });
+app.listen(PORT, () => { console.log(`http://localhost:${PORT}`) });
