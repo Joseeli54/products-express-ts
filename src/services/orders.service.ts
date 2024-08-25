@@ -1,3 +1,4 @@
+import { InternalException } from '../exceptions/internal-exception.exception'
 import { ErrorCode } from '../exceptions/root.exception'
 import { Result } from '../interfaces/results/results.interface'
 import { Order } from '../models/order.model'
@@ -15,14 +16,7 @@ async function getListOrders(skip: number, limit: number): Promise<Result<Order[
       orders = await ordersRepository.getRange(skip, limit)
       count = await ordersRepository.count()
     } catch {
-      return {
-        success: false,
-        data: [],
-        errors: ['Unexpected server error.'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'Could not get the products list due to unexpected error'
-      }
+        throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {
@@ -47,14 +41,7 @@ async function getListOrdersCurrentUser(skip: number, limit: number, authUser: a
       orders = await ordersRepository.getRangeByUserId(skip, limit, authUser.id)
       count = await ordersRepository.countByUserId(authUser.id)
     } catch {
-      return {
-        success: false,
-        data: [],
-        errors: ['Unexpected server error.'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'Could not get the products list due to unexpected error'
-      }
+        throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {
@@ -177,7 +164,7 @@ async function getOrderById(id: number): Promise<Result<Order | null>> {
 }
 
 
-async function createOrder( products: {id: string, count_products: number}[],authUser: any): Promise<Result<void>> {
+async function createOrder( products: {id: number, count_products: number}[],authUser: any): Promise<Result<void>> {
     /////////////////////// Validation /////////////////////////
     // In this part, they perform validations where it is verified 
     // if the array is null, if there is any duplicate product within the array
@@ -212,7 +199,7 @@ async function createOrder( products: {id: string, count_products: number}[],aut
     // and the available product count.
     const orderDetails = products.map(p => {
       return {
-        idProduct: p.id,
+        productId: p.id,
         count_products: p.count_products,
         count: 0, //Firstly assign zero to count
         price: 0  //Firstly assign zero to price
@@ -222,13 +209,13 @@ async function createOrder( products: {id: string, count_products: number}[],aut
     // A cycle is made to verify that the products exist, as well as verify that 
     // there are products available for the specified count.
     for (const orderDetail of orderDetails) {
-      const product = await productsRepository.getById(orderDetail.idProduct)
+      const product = await productsRepository.getById(orderDetail.productId)
   
       if (!product) {
         return {
           success: false,
           data: undefined,
-          errors: [`Product with id ${orderDetail.idProduct} not found`],
+          errors: [`Product with id ${orderDetail.productId} not found`],
           errorCode: ErrorCode.USER_NOT_FOUND,
           errorType: Errors.NOT_FOUND,
           message: 'The order could not be created because the product was not found.'
@@ -240,7 +227,7 @@ async function createOrder( products: {id: string, count_products: number}[],aut
           success: false,
           data: undefined,
           errors: [
-            `The product with the identifier ${orderDetail.idProduct} does not have enough stock, therefore, it is not available to be obtained. (current stock = ${product.count})`
+            `The product with the identifier ${orderDetail.productId} does not have enough stock, therefore, it is not available to be obtained. (current stock = ${product.count})`
           ],
           errorCode: ErrorCode.UNPROCESSABLE_ENTITY,
           errorType: Errors.UNPROCESSABLE_ENTITY,
@@ -260,7 +247,7 @@ async function createOrder( products: {id: string, count_products: number}[],aut
       updatedAt: new Date(),
       OrderDetail: orderDetails.map(p => {
         return {
-          productId: p.idProduct,
+          productId: p.productId,
           count: p.count,
           price: p.price
         }
@@ -274,11 +261,11 @@ async function createOrder( products: {id: string, count_products: number}[],aut
       // Update product stock
       for (const orderDetail of orderDetails) {
         const remainingStock = orderDetail.count - orderDetail.count_products
-        await productsRepository.updateQuantityById(orderDetail.idProduct, remainingStock)
+        await productsRepository.updateQuantityById(orderDetail.productId, remainingStock)
 
         //if count of stock is 0, then is not available product
         if(remainingStock == 0){
-          await productsRepository.updateAvailability(orderDetail.idProduct, "Not available")
+          await productsRepository.updateAvailability(orderDetail.productId, "Not available")
         }
 
       }

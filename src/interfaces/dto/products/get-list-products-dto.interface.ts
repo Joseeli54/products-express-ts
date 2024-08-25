@@ -1,6 +1,6 @@
 export interface GetListProductsResponseDto {
     products: {
-      id: string
+      id: number
       name: string
       description: string
       availability: string

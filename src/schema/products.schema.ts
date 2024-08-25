@@ -12,9 +12,9 @@ export const updateProductSchema = z.object({
     description: z.string().optional(),
     price: z.number().min(0).optional(),
     count: z.number().min(0).optional(),
-    availability: z.enum(['Available', 'Not available']),
+    availability: z.enum(['Available', 'Not available']).optional(),
 })
 
 export const getProductSchema = z.object({
-    id: z.string().optional()
+    id: z.number().optional()
 })

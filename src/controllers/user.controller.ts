@@ -15,8 +15,6 @@ export const listUsers = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit
     const serviceResult = await usersService.getListOrders(skip, limit)
 
-    if(!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
-
     const response: GetListUsersDto = {
         users: serviceResult.data.map(user => {
             return {
@@ -37,15 +35,13 @@ export const getUserById = async (req: Request, res: Response) => {
     const id = Number(req.params.id)
     const serviceResult = await usersService.getUserById(id)
   
-    if (!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
-  
     const response: GetUserDto = {
-      id: serviceResult.data.id,
-      name: serviceResult.data.name,
-      email: serviceResult.data.email,
-      role: serviceResult.data.role,
-      createdAt: serviceResult.data.createdAt!,
-      updatedAt: serviceResult.data.updatedAt!,
+      id: serviceResult.data!.id,
+      name: serviceResult.data!.name,
+      email: serviceResult.data!.email,
+      role: serviceResult.data!.role,
+      createdAt: serviceResult.data!.createdAt!,
+      updatedAt: serviceResult.data!.updatedAt!,
     }
   
     res.json(response)

@@ -1,52 +1,44 @@
-import { PrismaClient, Product, User } from '@prisma/client'
+import { PrismaClient, Product, Role, User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { init } from '@paralleldrive/cuid2';
 
-const length = 24; // 50% odds of collision after ~51,386,368 ids
-const cuid = init({ length });
-
-export const usersSeed: User[] = [
+export const usersSeed = [
     {
-        id: 1,
         email: 'felipe.arroyo@gmail.com',
         name: "Felipe Arroyo",
         password: bcrypt.hashSync("Password123!", 10),
-        role: "ADMIN",
+        role: "ADMIN" as Role,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        id: 2,
         email: 'perez.jhon@gmail.com',
         name: "Jhon Perez",
         password: bcrypt.hashSync("Password123!", 10),
-        role: "ADMIN",
+        role: "ADMIN" as Role,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        id: 3,
         email: 'carolina.aguilera@gmail.com',
         name: "Carolina Aguilera",
         password: bcrypt.hashSync("Password123!", 10),
-        role: "USER",
+        role: "USER" as Role,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        id: 4,
         email: 'mariela.rodriguez@gmail.com',
         name: "Mariela Rodriguez",
         password: bcrypt.hashSync("Password123!", 10),
-        role: "USER",
+        role: "USER" as Role,
         createdAt: new Date(),
         updatedAt: new Date()
     },
 ];
 
-export const productSeed: Product[] = [
+export const productSeed = [
     {
-        id: cuid(),
         name: "Mercedes-Benz G 580",
         description: "German brand vehicle",
         count: 3,
@@ -56,7 +48,6 @@ export const productSeed: Product[] = [
         updatedAt: new Date()
     },
     {
-        id: cuid(),
         name: "iPhone 15 Pro",
         description: "Black titanium, white titanium, blue titanium, natural titanium",
         count: 10,
@@ -66,7 +57,6 @@ export const productSeed: Product[] = [
         updatedAt: new Date()
     },
     {
-        id: cuid(),
         name: "Energy drinks",
         description: "Energy drinks that you can use to train physically.",
         count: 50,
@@ -76,7 +66,6 @@ export const productSeed: Product[] = [
         updatedAt: new Date()
     },
     {
-        id: cuid(),
         name: "Canned food",
         description: "Sardine, tuna, canned meat, among others.",
         count: 100,
@@ -92,7 +81,7 @@ const prismaClient = new PrismaClient()
 async function main() {
     for (const user of usersSeed) {
       await prismaClient.user.upsert({
-        where: { id: user.id },
+        where: { email: user.email },
         update: {},
         create: user
       })
@@ -100,7 +89,7 @@ async function main() {
   
     for (const product of productSeed) {
       await prismaClient.product.upsert({
-        where: { id: product.id },
+        where: { name: product.name },
         update: {},
         create: product
       })

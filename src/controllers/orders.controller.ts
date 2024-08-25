@@ -5,8 +5,6 @@ import { ordersService } from "../services/orders.service";
 import { ErrorCode } from "../exceptions/root.exception";
 import { NotFoundException } from "../exceptions/not-found.exception";
 import { GetOrdersListDto } from "../interfaces/dto/orders/get-orders-list-dto.interface";
-import { InternalException } from "../exceptions/internal-exception.exception";
-import { Errors } from "../types/errors.model";
 import { GetOrderDto } from "../interfaces/dto/orders/get-order-dto.interface";
 import { UpdateOrderStatusRequestDto } from "../interfaces/dto/orders/update-order-dto.interface";
 
@@ -15,8 +13,6 @@ export const listOrders = async (req: Request, res: Response) => {
     const limit = Number(req.query.limit)
     const skip = (page - 1) * limit
     const serviceResult = await ordersService.getListOrders(skip, limit)
-
-    if(!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
 
     const response: GetOrdersListDto = {
         orders: serviceResult.data.map(order => {
@@ -50,8 +46,6 @@ export const listOrdersCurrentUser = async (req: any, res: Response) => {
     const limit = Number(req.query.limit)
     const skip = (page - 1) * limit
     const serviceResult = await ordersService.getListOrdersCurrentUser(skip, limit, req.user)
-
-    if(!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
 
     const response: GetOrdersListDto = {
         orders: serviceResult.data.map(order => {

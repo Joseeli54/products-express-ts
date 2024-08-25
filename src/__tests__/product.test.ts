@@ -11,7 +11,7 @@ const productDataIncomplete : any = {
 }
 
 const alreadyNameProduct : any = {
-    name: "Tea 7",
+    name: "Mercedes-Benz G 580",
     description: "A sweet tea 7",
     price: 10.0,
     count: 10,
@@ -76,7 +76,7 @@ describe('products', () =>{
 
         describe('productService get: non-existent product', () => {
             it('The result returns 404 when I try to search for a product that does not exist', async () => {
-                const result = await productsService.getProductById("asd564681ca54s1c6")
+                const result = await productsService.getProductById(1000)
 
                 expect(result.errorCode).toBe(404)
             })
@@ -84,7 +84,7 @@ describe('products', () =>{
 
         describe('productService put: non-existent product', () => {
             it('The result returns 404 when I try to update a product that does not exist', async () => {
-                const result = await productsService.updateProductById(productEdit, "asd564681ca54s1c6")
+                const result = await productsService.updateProductById(productEdit, 1000)
 
                 expect(result.errorCode).toBe(404)
             })

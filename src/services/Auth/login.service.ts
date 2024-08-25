@@ -7,6 +7,7 @@ import { Errors } from "../../types/errors.model"
 import * as jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "../../secrets"
 import { loginSchema } from "../../schema/login.schema"
+import { InternalException } from "../../exceptions/internal-exception.exception"
 
 async function login(email: string,password: string): Promise<Result<{ token: string, user: any } | null>> {
 
@@ -31,39 +32,43 @@ async function login(email: string,password: string): Promise<Result<{ token: st
             errors: errors
         }
     }
+
+    try{
+        // Get user by email
+        let user = await prismaClient.user.findFirst({where: {email}})
+        if(!user){
+            return {
+                success: false,
+                message: "Failed to log in because the user does not exist",
+                data: null,
+                errorCode: ErrorCode.USER_NOT_FOUND,
+                errorType: Errors.NOT_FOUND,
+                errors: ["User does not exist"]
+            }
+        }
+
+        if(!compareSync(password, user!.password)){
+            return {
+                success: false,
+                message: "Failed to log in because the password is incorrect",
+                data: null,
+                errorCode: ErrorCode.INCORRECT_PASSWORD,
+                errorType: Errors.INCORRECT_PASSWORD,
+                errors: ["User does not exist"]
+            }
+        }
+
+        const token = jwt.sign({
+            userId: user!.id
+        }, JWT_SECRET)
     
-    // Get user by email
-    let user = await prismaClient.user.findFirst({where: {email}})
-    if(!user){
         return {
-            success: false,
-            message: "Failed to log in because the user does not exist",
-            data: null,
-            errorCode: ErrorCode.USER_NOT_FOUND,
-            errorType: Errors.NOT_FOUND,
-            errors: ["User does not exist"]
+            success: true,
+            data: { token, user },
+            message: 'The user has logged in successfully.'
         }
-    }
-
-    if(!compareSync(password, user!.password)){
-        return {
-            success: false,
-            message: "Failed to log in because the password is incorrect",
-            data: null,
-            errorCode: ErrorCode.INCORRECT_PASSWORD,
-            errorType: Errors.INCORRECT_PASSWORD,
-            errors: ["User does not exist"]
-        }
-    }
-
-    const token = jwt.sign({
-        userId: user!.id
-    }, JWT_SECRET)
-  
-    return {
-      success: true,
-      data: { token, user },
-      message: 'The user has logged in successfully.'
+    } catch(err){
+        throw new InternalException('Error unexpected login', err, ErrorCode.INTERNAL_EXCEPTION)
     }
 }
 
