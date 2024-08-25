@@ -7,11 +7,12 @@ import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
 import { createUserSchema, updateUserSchema } from '../schema/users.schema'
 import { InternalException } from '../exceptions/internal-exception.exception'
+import { sendMail } from '../mailer/mailer'
 
 async function getListOrders(skip: number, limit: number): Promise<Result<User[]>> {
     let users: User[]
     let count: number
-  
+    //get all orders existing
     try {
       users = await usersRepository.getRange(skip, limit)
       count = await usersRepository.count()
@@ -64,6 +65,7 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
 
     let data = { name: user.name, email: user.email, role : user.role, password : password }
 
+    //Validation of format type and data of user
     try{
       createUserSchema.parse(data)
     }catch(err:any){
@@ -109,6 +111,14 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
     // Create user
     try {
       await usersRepository.create(saveUser)
+
+      const from: string = `Create Account" <` + process.env.MAIL_HOST + `>`;
+      const to: string = user.email;
+      const subject: string = 'Create Account - Product Express';
+      const mailTemplate: string = `<p>Hello `+ user.name + `,</p>
+                                    <p>Thank you for signing up for our trial API called Product Express.</p>`;
+      //The email is sent at the time of registration, if the email does not exist or there is an error, the process will continue.
+      sendMail( from, to, subject, mailTemplate);
     } catch (error) {
       return {
         success: false,
@@ -129,6 +139,7 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
 
 async function updateUser(id: number, user: Omit<User, 'id' | 'password'>,password: string): Promise<Result<void>> {
 
+    //Validation of format type and data of user
     try{
         updateUserSchema.parse(user)
     }catch(err:any){

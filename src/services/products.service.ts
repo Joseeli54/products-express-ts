@@ -9,6 +9,7 @@ import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
 
 async function getListProducts(skip: number, limit: number): Promise<Result<Product[]>> {
+  //get product list, configure the pagination with skip and limit parameters
   let products: Product[]
   let count: number
 
@@ -34,6 +35,7 @@ async function getListProducts(skip: number, limit: number): Promise<Result<Prod
 
 async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>> {
 
+    //validation the format type and data of products
     try{
         ProductSchema.parse(product)
     }catch(err:any){

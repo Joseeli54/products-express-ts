@@ -10,9 +10,10 @@ import { loginSchema } from "../../schema/login.schema"
 import { InternalException } from "../../exceptions/internal-exception.exception"
 
 async function login(email: string,password: string): Promise<Result<{ token: string, user: any } | null>> {
-
+    //Login the user with email and password
     let body = {email: email, password: password}
 
+    //Validation of format type and data
     try{
         loginSchema.parse(body)
     }catch(err:any){
@@ -47,6 +48,7 @@ async function login(email: string,password: string): Promise<Result<{ token: st
             }
         }
 
+        //Compare the password receive with the user saved
         if(!compareSync(password, user!.password)){
             return {
                 success: false,
@@ -58,6 +60,7 @@ async function login(email: string,password: string): Promise<Result<{ token: st
             }
         }
 
+        //generate the token with JWT
         const token = jwt.sign({
             userId: user!.id
         }, JWT_SECRET)

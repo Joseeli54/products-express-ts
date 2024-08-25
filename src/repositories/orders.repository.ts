@@ -16,7 +16,7 @@ async function countByUserId(userId: number): Promise<number> {
 }
   
 async function getAll(): Promise<Order[]> {
-    // include orderProducts and include products inside orderProducts
+    // include products and include orders inside Orderdetails
     const orders = await prismaClient.order.findMany({
         include: {
             OrderDetail: {
@@ -35,6 +35,7 @@ async function getAll(): Promise<Order[]> {
 }
 
 async function getRange(skip: number, take: number): Promise<Order[]> {
+    //I configure the pagination when returning orders with skip and take.
     const orders = await prismaClient.order.findMany({
         skip,
         take,
@@ -55,6 +56,7 @@ async function getRange(skip: number, take: number): Promise<Order[]> {
 }
 
 async function getAllByUserId(userId: number): Promise<Order[]> {
+    //I get all the orders from a specific user
     const orders = await prismaClient.order.findMany({
       where: {
         userId
@@ -76,6 +78,7 @@ async function getAllByUserId(userId: number): Promise<Order[]> {
 }
 
 async function getRangeByUserId(skip: number, take: number, userId: number): Promise<Order[]> {
+    //I configure the pagination when returning orders with skip and take from a specific user. 
     const orders = await prismaClient.order.findMany({
       where: {
         userId
@@ -99,6 +102,7 @@ async function getRangeByUserId(skip: number, take: number, userId: number): Pro
 }
 
 async function getById(id: number): Promise<Order | null> {
+    //get one order in specify
     const order = await prismaClient.order.findUnique({
       where: {
         id
@@ -120,6 +124,7 @@ async function getById(id: number): Promise<Order | null> {
 }
 
 async function create(order: Omit<Order, 'id'>): Promise<void> {
+    //create order
     await prismaClient.order.create({
       data: {
         userId: order.userId,
@@ -134,6 +139,7 @@ async function create(order: Omit<Order, 'id'>): Promise<void> {
 }
 
 async function remove(id: number): Promise<void> {
+    //remove order
     await prismaClient.orderDetail.deleteMany({
       where: {
         orderId: id
@@ -148,6 +154,7 @@ async function remove(id: number): Promise<void> {
 }
 
 async function update(id: number, status: string, updatedAt: Date): Promise<void> {
+    //update order
     await prismaClient.order.update({
       where: {
         id
