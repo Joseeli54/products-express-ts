@@ -295,7 +295,7 @@
     },
     "/api/products/": {
       "post": {
-        "description": "Endpoint used for creating a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for creating a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Product"
         ],
@@ -495,7 +495,7 @@
     },
     "/api/products/:id": {
       "put": {
-        "description": "Endpoint used for update a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for update a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Product"
         ],
@@ -603,7 +603,7 @@
         }
       },
       "delete": {
-        "description": "Endpoint used for delete a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for delete a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Product"
         ],
@@ -848,7 +848,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "Endpoint used to obtain a list of orders, where a pagination is configured to indicate the page number and the limit of orders to be returned **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used to obtain a list of orders, where a pagination is configured to indicate the page number and the limit of orders to be returned **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Order"
         ],
@@ -946,7 +946,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "Endpoint used to obtain a list of orders from a specific user, where a pagination is configured to indicate the page number and the limit of orders to be returned **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used to obtain a list of orders from a specific user, where a pagination is configured to indicate the page number and the limit of orders to be returned **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Order"
         ],
@@ -1151,7 +1151,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "End point used to obtain a specific order using an identifier **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "End point used to obtain a specific order using an identifier **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Order"
         ],
@@ -1224,7 +1224,7 @@
     },
     "/api/orders/:id": {
       "put": {
-        "description": "Endpoint used for update a order **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for update a order **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Order"
         ],
@@ -1317,7 +1317,7 @@
         }
       },
       "delete": {
-        "description": "Endpoint used for delete a order **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for delete a order **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "Order"
         ],
@@ -1386,7 +1386,7 @@
     },
     "/api/users/": {
       "post": {
-        "description": "Endpoint used for creating a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for creating a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "User"
         ],
@@ -1590,7 +1590,7 @@
     },
     "/api/users/:id": {
       "get": {
-        "description": "Endpoint used for obtain a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for obtain a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "User"
         ],
@@ -1657,7 +1657,7 @@
         }
       },
       "put": {
-        "description": "Endpoint used for update a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for update a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "User"
         ],
@@ -1765,7 +1765,7 @@
         }
       },
       "delete": {
-        "description": "Endpoint used for delete a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.",
+        "description": "Endpoint used for delete a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.",
         "tags": [
           "User"
         ],
@@ -1908,7 +1908,7 @@
           "minimum": 6,
           "required": true
         },
-        "status": {
+        "role": {
           "type": "string",
           "enum": [
             "USER",
