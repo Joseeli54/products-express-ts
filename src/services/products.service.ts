@@ -1,6 +1,8 @@
+import { InternalException } from '../exceptions/internal-exception.exception'
 import { ErrorCode } from '../exceptions/root.exception'
 import { Result } from '../interfaces/results/results.interface'
 import { Product } from '../models/product.model'
+import { ordersRepository } from '../repositories/orders.repository'
 import { productsRepository } from '../repositories/products.repository'
 import { getProductSchema, ProductSchema, updateProductSchema } from '../schema/products.schema'
 import { prismaClient } from '../server'
@@ -14,14 +16,7 @@ async function getListProducts(skip: number, limit: number): Promise<Result<Prod
     products = await productsRepository.getRange(skip, limit)
     count = await productsRepository.count()
   } catch {
-    return {
-      success: false,
-      data: [],
-      errors: ['Unexpected server error.'],
-      errorCode: ErrorCode.INTERNAL_EXCEPTION,
-      errorType: Errors.INTERNAL_EXCEPTION,
-      message: 'Could not get the products list due to unexpected error'
-    }
+    throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
   }
 
   return {
@@ -84,15 +79,9 @@ async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>
     // Create product
     try {
       await productsRepository.create(saveProduct)
-    } catch {
-      return {
-        success: false,
-        data: undefined,
-        errors: ['Unexpected server error.'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'Could not get the products list due to unexpected error'
-      }
+    } catch (err) {
+      console.log(err)
+      throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {
@@ -102,7 +91,7 @@ async function createProduct(product: Omit<Product, 'id'>): Promise<Result<void>
     }
 }
 
-async function updateProductById( product: Omit<Product, 'id'>, id: string): Promise<Result<void>> {
+async function updateProductById( product: Omit<Product, 'id'>, id: number): Promise<Result<void>> {
     // Verification
     try{
       updateProductSchema.parse(product)
@@ -146,15 +135,33 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
         }
     })
 
+    //I verify that this product does not have pending or ongoing orders. If so, the update is cancelled.
     if (productHasOrders?.OrderDetail.length! > 0) {
-      return {
-        success: false,
-        data: undefined,
-        errors: ['Product was already ordered and cannot be updated'],
-        errorCode: ErrorCode.CONFLICT,
-        errorType: Errors.CONFLICT,
-        message: 'Product was already ordered and cannot be updated'
+      let IncompleteOrders = false;
+      
+      for (let index = 0; index < productHasOrders!.OrderDetail.length; index++) {
+        let orderDetail = productHasOrders!.OrderDetail[index]
+
+        if(orderDetail.productId = id){
+          let orderProduct = await ordersRepository.getById(orderDetail.orderId)
+
+          if(orderProduct!.status == 'Pending' || orderProduct!.status == 'In Progress'){
+            IncompleteOrders = true;
+          }
+
+        }
       }
+
+      //If there are incomplete orders, the error is returned.
+      if(IncompleteOrders)
+        return {
+          success: false,
+          data: undefined,
+          errors: ['The product has already been ordered, and has orders pending or in progress. Cannot be updated for now.'],
+          errorCode: ErrorCode.CONFLICT,
+          errorType: Errors.CONFLICT,
+          message: 'The product has already been ordered, and has orders pending or in progress. Cannot be updated for now.'
+        }
     }
   
     // Verify that product by the same name does not already exist
@@ -175,6 +182,12 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
         message: 'Due to validation errors, this product cannot be updated.'
       }
     }
+
+    if(product.count != undefined){
+      if(product.count > 0){
+        product.availability = "Available";
+      }
+    }
   
     const productSave: Omit<Product, 'id'> = {
       name: product.name,
@@ -190,14 +203,7 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
     try {
       await productsRepository.updateById(id, productSave)
     } catch {
-      return {
-        success: false,
-        data: undefined,
-        errors: ['Unexpected server error.'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'Could not update the product due to unexpected error'
-      }
+      throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {
@@ -207,7 +213,7 @@ async function updateProductById( product: Omit<Product, 'id'>, id: string): Pro
     }
 }
 
-async function getProductById(id: string): Promise<Result<Product | null>> {
+async function getProductById(id: number): Promise<Result<Product | null>> {
     //Validation
     let data = { id : id }
 
@@ -237,14 +243,7 @@ async function getProductById(id: string): Promise<Result<Product | null>> {
     try {
       product = await productsRepository.getById(id)
     } catch {
-      return {
-        success: false,
-        data: null,
-        errors: ['Unexpected server error.'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'Could not get the product due to unexpected error'
-      }
+      throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     if (!product) {
@@ -265,7 +264,7 @@ async function getProductById(id: string): Promise<Result<Product | null>> {
     }
   }
 
-  async function deleteProductById(id: string): Promise<Result<void>> {
+  async function deleteProductById(id: number): Promise<Result<void>> {
     //Validation
     let data = { id : id }
 
@@ -327,14 +326,7 @@ async function getProductById(id: string): Promise<Result<Product | null>> {
     try {
       await productsRepository.removeById(id)
     } catch {
-      return {
-        success: false,
-        data: undefined,
-        errors: ['Product not found'],
-        errorCode: ErrorCode.USER_NOT_FOUND,
-        errorType: Errors.NOT_FOUND,
-        message: 'Due to validation errors, this product cannot be deleted.'
-      }
+      throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {

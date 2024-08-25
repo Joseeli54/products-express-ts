@@ -1,0 +1,1353 @@
+openapi: '3.0.3'
+info:
+  title: 'Product Express API'
+  version: '1.0.0'
+  description: "This is a test project used to create an example API with the Node.js tool, TypeScript, in conjunction with Prisma (PostgreSQL)."
+servers:
+  - url: /
+    description: Product Express TS
+tags:
+  - name: Auth
+    description: It is the main authentication route of the API, in which the actions for user access management will be carried out.
+  - name: Product
+    description: Management products (search, create, update, delete)
+  - name: Order
+    description: Management orders for users and products (search, create, update, delete)
+  - name: User
+    description: Management users (search, create, update, delete)
+schemes:
+  - http
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: >-
+      Enter the returned token on the Login endpoint
+paths:
+  /api/auth/login:
+    post:
+      description: Endpoint used for user authentication in the API
+      tags: ["Auth"]
+      summary: "User log in with credencials"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user sign in with the credential
+          schema:
+            $ref: '#/definitions/UserLogin'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  example: "felipe.arroyo@gmail.com"
+                password:
+                  type: "string"
+                  format: "password"
+                  example: "Password123!"
+      responses:
+          200:
+            description: "Successfully authenticated." 
+            headers: 
+              Set-Cookie:
+                schema:
+                  type: string
+                  example: JWT=abcde12345; Path=/; HttpOnly
+                description: "The header is returned in a cookie named 'JWT'. You must include this cookie in subsequent requests. However, this will only be in production mode, for greater security. In developer mode, the token will be returned in the JSON."
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "The user is logged successfully"
+                    user:
+                      type: "object"
+                      example: {
+                                    "success": true,
+                                    "user": {
+                                        "id": 13,
+                                        "name": "User Test",
+                                        "email": "test.user@gmail.com",
+                                        "password": "$2b$10$SpPQqWv6g4qLcMOPula7UeT0DhDuZu31zFejfHFRGgow0uxHmZZKW",
+                                        "role": "USER",
+                                        "createdAt": "2024-08-25T16:48:06.548Z",
+                                        "updatedAt": "2024-08-25T16:48:06.548Z"
+                                    },
+                                    "message": "The user is logged successfully",
+                                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3MjQ2MDQ1MzR9.26HJ9N1sLRDruFy_dL2FKnGxUtUPGXWqHZMt77HSJ1U"
+                                }
+          507:
+            description: "The request was not successful due to an error in data validation."
+          502:
+            description: "The request was not successful because the password was incorrect."
+          404:
+            description: "The request was invalid because the user was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+  /api/auth/signup:
+    post:
+      description: Endpoint used for creating a user account.
+      tags: ["Auth"]
+      summary: "User sends their creation data to register"
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user sign up with the credential
+          schema:
+            $ref: '#/definitions/User'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "text"
+                  example: "Test10"
+                email:
+                  type: "string"
+                  format: "email"
+                  example: "test10@gmail.com"
+                password:
+                  type: "string"
+                  format: "password"
+                  example: "abc123"
+      responses:
+          200:
+            description: "User created succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "User created succesfully"
+                    user:
+                      type: "object"
+                      example: {
+                                    "success": true,
+                                    "data": {
+                                        "name": "User Test",
+                                        "email": "test.user@gmail.com",
+                                        "role": "USER",
+                                        "password": "$2b$10$SpPQqWv6g4qLcMOPula7UeT0DhDuZu31zFejfHFRGgow0uxHmZZKW"
+                                    },
+                                    "message": "User created successfully"
+                                }
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a user already exists."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+  /api/profile/:
+    get:
+      description: Endpoint used to get my profile data. For this endpoint, 
+                the token generated in the login functionality must be sent, 
+                so that the system knows the identity of the user making the request.
+      tags: ["Auth"]
+      summary: "Data is obtained from the user's profile."
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+      responses:
+          200:
+            description: "Data profile was obtain successfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "object"
+                      example: {
+                                  "id": 13,
+                                  "name": "User Test",
+                                  "email": "test.user@gmail.com",
+                                  "password": "$2b$10$SpPQqWv6g4qLcMOPula7UeT0DhDuZu31zFejfHFRGgow0uxHmZZKW",
+                                  "role": "USER",
+                                  "createdAt": "2024-08-25T16:48:06.548Z",
+                                  "updatedAt": "2024-08-25T16:48:06.548Z"
+                              }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/products/:
+    post:
+      description: Endpoint used for creating a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Product"]
+      summary: "The product data is sent for its creation. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: body
+          name: product
+          description: The product is created with your data
+          schema:
+            $ref: '#/definitions/Product'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "text"
+                  example: "Product 1"
+                description:
+                  type: "string"
+                  format: "text"
+                  example: "Description Product 1"
+                price:
+                  type: "number"
+                  format: "float"
+                  example: 10.0
+                count:
+                  type: "number"
+                  format: "int64"
+                  example: 10
+      responses:
+          200:
+            description: "Product created succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "Product created successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a product already exists."
+          404:
+            description: "The request was invalid because the product was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    get:
+      security:
+        - bearerAuth: []
+      description: Endpoint used to obtain a list of products, where a pagination is configured to indicate the page number and the limit of products to be returned.
+      tags: ["Product"]
+      summary: "A list of products is obtained by sending the page number and the limit of products to be returned."
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: limit
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "List product obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "The product list is obtain successfully"
+                    response:
+                      type: "object"
+                      example: {
+                                    "products": [
+                                        {
+                                            "id": 7,
+                                            "name": "Product 1",
+                                            "description": "Product description",
+                                            "price": 10,
+                                            "count": 0,
+                                            "availability": "Not available",
+                                            "createdAt": "2024-08-25T16:52:51.544Z",
+                                            "updatedAt": "2024-08-25T16:54:26.889Z"
+                                        },
+                                        {
+                                            "id": 8,
+                                            "name": "Product 2",
+                                            "description": "Product description",
+                                            "price": 10,
+                                            "count": 20,
+                                            "availability": "Available",
+                                            "createdAt": "2024-08-25T16:56:23.292Z",
+                                            "updatedAt": "2024-08-25T16:56:23.292Z"
+                                        }
+                                    ]
+                                }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/products/:id:
+    put:
+      description: Endpoint used for update a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Product"]
+      summary: "The product data is sent for its update. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: body
+          name: product
+          description: The product is updated with your data
+          schema:
+            $ref: '#/definitions/Product'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "text"
+                  example: "Product 1"
+                description:
+                  type: "string"
+                  format: "text"
+                  example: "Description Product 1"
+                price:
+                  type: "number"
+                  format: "float"
+                  example: 10.0
+                count:
+                  type: "number"
+                  format: "int64"
+                  example: 10
+      responses:
+          200:
+            description: "Product updated succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "Product updated successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a product already exists."
+          404:
+            description: "The request was invalid because the product was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    delete:
+      description: Endpoint used for delete a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Product"]
+      summary: "The product id is sent for its delete. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "Product deleted succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "Product deleted successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          505:
+            description: "The request was not successful, due to a conflict when deleting it. It may be that there is another record that depends on it."
+          404:
+            description: "The request was invalid because the product was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    get:
+      description: Endpoint used for obtain a product. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Product"]
+      summary: "The identification of the product to obtain its information."
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "The product obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    response:
+                      type: "object"
+                      example: {
+                                  "response": {
+                                    "success": true,
+                                    "response": {
+                                      "name": "Product 1",
+                                      "description": "Product description",
+                                      "price": 10,
+                                      "count": 0,
+                                      "availability": "Not available",
+                                      "createdAt": "2024-08-25T16:52:51.544Z",
+                                      "updatedAt": "2024-08-25T16:54:26.889Z"
+                                    },
+                                    "message": "Product obtain successfully"
+                                  }
+                                }
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a product already exists."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/orders/:
+    post:
+      description: Endpoint used for creating a order. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "The order data is sent for its creation."
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: body
+          name: order
+          description: The order is created with your data
+          schema:
+            $ref: '#/definitions/Order'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                  products: 
+                    type: "array"
+                    items: 
+                      type: "object"
+                      properties: 
+                        id:
+                          type: "number"
+                          format: "int64"
+                          example: 1
+                        count_products: 
+                          type: "number"
+                          format: "int64"
+                          example: 3
+      responses:
+          200:
+            description: "Order created succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "Order created successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a order already exists."
+          404:
+            description: "The request was invalid because the order was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    get:
+      security:
+        - bearerAuth: []
+      description: Endpoint used to obtain a list of orders, where a pagination is configured to indicate the page number and the limit of orders to be returned **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "A list of orders is obtained by sending the page number and the limit of orders to be returned. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: limit
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "List order obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "The order list is obtain successfully"
+                    response:
+                      type: "object"
+                      example: {
+                                "orders": [
+                                  {
+                                      "id": 4,
+                                      "updatedAt": "2024-08-24T20:35:56.087Z",
+                                      "createdAt": "2024-08-24T12:48:12.164Z",
+                                      "status": "Completed",
+                                      "OrderDetail": [
+                                          {
+                                              "product": {
+                                                  "description": "German brand vehicle",
+                                                  "id": 7,
+                                                  "name": "Mercedes-Benz G 580",
+                                                  "count": 3,
+                                                  "price": 15000
+                                              }
+                                          }
+                                      ]
+                                  }
+                                ]
+                              }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/orders/userById/:id:
+    get:
+      security:
+        - bearerAuth: []
+      description: Endpoint used to obtain a list of orders from a specific user, where a pagination is configured to indicate the page number and the limit of orders to be returned **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "A list of orders is obtained by sending id user, the page number and limit of orders to be returned. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: limit
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "List order obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "The order list is obtain successfully"
+                    response:
+                      type: "object"
+                      example: {
+                                  "orders": [
+                                      {
+                                          "id": 9,
+                                          "updatedAt": "2024-08-25T16:54:47.976Z",
+                                          "createdAt": "2024-08-25T16:54:26.810Z",
+                                          "status": "Completed",
+                                          "OrderDetail": [
+                                              {
+                                                  "product": {
+                                                      "description": "Product description",
+                                                      "id": 7,
+                                                      "name": "Product 1",
+                                                      "count": 20,
+                                                      "price": 10
+                                                  }
+                                              }
+                                          ]
+                                      }
+                                  ]
+                              }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/orders/currentUser:
+    get:
+      security:
+        - bearerAuth: []
+      description: Endpoint used to obtain a list of orders from the current user who is logged in, where a pagination is configured to indicate the page number and the limit of orders to be returned. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "A list of orders is obtained by sending id user, the page number and limit of orders to be returned."
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: limit
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "List order obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "The order list is obtain successfully"
+                    response:
+                      type: "object"
+                      example: {
+                                  "orders": [
+                                      {
+                                          "id": 9,
+                                          "updatedAt": "2024-08-25T16:54:47.976Z",
+                                          "createdAt": "2024-08-25T16:54:26.810Z",
+                                          "status": "Completed",
+                                          "OrderDetail": [
+                                              {
+                                                  "product": {
+                                                      "description": "Product description",
+                                                      "id": 7,
+                                                      "name": "Product 1",
+                                                      "count": 20,
+                                                      "price": 10
+                                                  }
+                                              }
+                                          ]
+                                      }
+                                  ]
+                              }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/orders/order/:id:
+    get:
+      security:
+        - bearerAuth: []
+      description: End point used to obtain a specific order using an identifier **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "A list of orders is obtained by sending id user, the page number and limit of orders to be returned. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "The order obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    response:
+                      type: "object"
+                      example: {
+                                    "id": 9,
+                                    "userId": 2,
+                                    "updatedAt": "2024-08-25T16:54:47.976Z",
+                                    "createdAt": "2024-08-25T16:54:26.810Z",
+                                    "status": "Completed",
+                                    "OrderDetail": [
+                                        {
+                                            "product": {
+                                                "description": "Product description",
+                                                "id": 7,
+                                                "name": "Product 1",
+                                                "count": 20,
+                                                "price": 10
+                                            }
+                                        }
+                                    ]
+                                }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/orders/:id:
+    put:
+      description: Endpoint used for update a order **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "The order data is sent for its update. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: body
+          name: status
+          description: The order status is updated with your data
+          schema:
+            $ref: '#/definitions/OrderStatus'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                status:
+                  type: "string"
+                  format: "text"
+                  example: "In Progress"
+      responses:
+          200:
+            description: "Order updated succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "Order updated successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a order already exists."
+          404:
+            description: "The request was invalid because the order was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    delete:
+      description: Endpoint used for delete a order **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["Order"]
+      summary: "The order id is sent for its delete. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "Order deleted succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "Order deleted successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          505:
+            description: "The request was not successful, due to a conflict when deleting it. It may be that there is another record that depends on it."
+          404:
+            description: "The request was invalid because the order was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/users/:
+    post:
+      description: Endpoint used for creating a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["User"]
+      summary: "The user data is sent for its creation. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: body
+          name: user
+          description: The user is created with your data
+          schema:
+            $ref: '#/definitions/UserCreate'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "text"
+                  example: "Admin Test"
+                email:
+                  type: "string"
+                  format: "email"
+                  example: "admin.test@gmail.com"
+                password:
+                  type: "string"
+                  format: "password"
+                  example: "Password123!"
+                role:
+                  type: "string"
+                  format: "text"
+                  example: "ADMIN"
+      responses:
+          200:
+            description: "User created succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "User created successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a user already exists."
+          404:
+            description: "The request was invalid because the user was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    get:
+      security:
+        - bearerAuth: []
+      description: Endpoint used to obtain a list of users, where a pagination is configured to indicate the page number and the limit of users to be returned. **(Only Admin)**
+      tags: ["User"]
+      summary: "A list of users is obtained by sending the page number and the limit of users to be returned. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: query
+          name: limit
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "List user obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    response:
+                      type: "object"
+                      example: {
+                                  "users": [
+                                      {
+                                          "id": 1,
+                                          "name": "Felipe Arroyo",
+                                          "email": "felipe.arroyo@gmail.com",
+                                          "createdAt": "2024-08-25T14:52:52.509Z",
+                                          "updatedAt": "2024-08-25T14:52:52.509Z",
+                                          "role": "ADMIN"
+                                      },
+                                      {
+                                          "id": 2,
+                                          "name": "Jhon Perez",
+                                          "email": "perez.jhon@gmail.com",
+                                          "createdAt": "2024-08-25T14:52:52.583Z",
+                                          "updatedAt": "2024-08-25T14:52:52.583Z",
+                                          "role": "ADMIN"
+                                      },
+                                      {
+                                          "id": 3,
+                                          "name": "Carolina Aguilera",
+                                          "email": "carolina.aguilera@gmail.com",
+                                          "createdAt": "2024-08-25T14:52:52.658Z",
+                                          "updatedAt": "2024-08-25T14:52:52.658Z",
+                                          "role": "USER"
+                                      },
+                                      {
+                                          "id": 4,
+                                          "name": "Mariela Rodriguez",
+                                          "email": "mariela.rodriguez@gmail.com",
+                                          "createdAt": "2024-08-25T14:52:52.736Z",
+                                          "updatedAt": "2024-08-25T14:52:52.736Z",
+                                          "role": "USER"
+                                      }
+                                  ]
+                                }
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+  /api/users/:id:
+    get:
+      description: Endpoint used for obtain a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["User"]
+      summary: "The identification of the user to obtain its information **(Only Admin)**."
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "The user obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    response:
+                      type: "object"
+                      example: {
+                                    "id": 1,
+                                    "name": "Felipe Arroyo",
+                                    "email": "felipe.arroyo@gmail.com",
+                                    "role": "ADMIN",
+                                    "createdAt": "2024-08-25T14:52:52.509Z",
+                                    "updatedAt": "2024-08-25T14:52:52.509Z"
+                                }
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a user already exists."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    put:
+      description: Endpoint used for update a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["User"]
+      summary: "The user data is sent for its update. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+        - in: body
+          name: user
+          description: The user is updated with your data
+          schema:
+            $ref: '#/definitions/UserCreate'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "text"
+                  example: "Admin Test"
+                email:
+                  type: "string"
+                  format: "email"
+                  example: "admin.test@gmail.com"
+                password:
+                  type: "string"
+                  format: "password"
+                  example: "Password123!"
+                role:
+                  type: "string"
+                  format: "text"
+                  example: "ADMIN"
+      responses:
+          200:
+            description: "User updated succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    success:
+                      type: "boolean"
+                      example: true
+                    message:
+                      type: "string"
+                      example: "User updated successfully"
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a user already exists."
+          404:
+            description: "The request was invalid because the user was found."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+    delete:
+      description: Endpoint used for delete a user **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent, so that the system knows the identity of the user making the request.
+      tags: ["User"]
+      summary: "The user id is sent for its delete. **(Only Admin)**"
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: jwt
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+      responses:
+          200:
+            description: "The user obtain succesfully"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    response:
+                      type: "object"
+                      example: {
+                                    "id": 1,
+                                    "name": "Felipe Arroyo",
+                                    "email": "felipe.arroyo@gmail.com",
+                                    "role": "ADMIN",
+                                    "createdAt": "2024-08-25T14:52:52.509Z",
+                                    "updatedAt": "2024-08-25T14:52:52.509Z"
+                                }
+          507:
+            description: "The request was not successful due to an error in data validation."
+          501:
+            description: "The request was not successful, because a user already exists."
+          500:
+            description: "The request was not successful because there was an unexpected error."
+          401:
+            description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+definitions:
+  Product:
+    type: object
+    required:
+      - name
+      - description
+      - price
+      - count
+    properties:
+      name:
+        type: string
+        required: true
+      description:
+        type: string
+        required: true
+      price:
+        type: number
+        minimum: 0
+        required: true
+      count:
+        type: number
+        minimum: 0
+        required: true
+  User:
+    type: object
+    required:
+      - name
+      - email
+      - password
+    properties:
+      name:
+        type: string
+        required: true
+      email:
+        type: string
+        required: true
+      password:
+        type: string
+        minimum: 6
+        required: true
+  UserCreate:
+    type: object
+    required:
+      - name
+      - email
+      - password
+      - role
+    properties:
+      name:
+        type: string
+        required: true
+      email:
+        type: string
+        required: true
+      password:
+        type: string
+        minimum: 6
+        required: true
+      status:
+        type: string
+        enum: ["USER", "ADMIN"]
+        required: true
+  UserLogin:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        required: true
+      password:
+        type: string
+        minimum: 6
+        required: true
+  Order:
+    type: object
+    required:
+      - products
+    properties:
+      products: 
+        type: "array"
+        items: 
+          type: "object"
+          properties: 
+            id:
+              type: "number"
+            count_products: 
+              type: "number"
+  OrderStatus:
+    type: object
+    required:
+      - status
+    properties:
+      status: 
+        type: "string"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

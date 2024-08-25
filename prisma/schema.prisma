@@ -19,7 +19,7 @@ enum Role {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id Int @id @unique @default(autoincrement())
   name String
   email String @unique
   password String
@@ -30,8 +30,8 @@ model User {
 }
 
 model Product {
-  id String @id @default(cuid())
-  name String
+  id Int @id @unique @default(autoincrement())
+  name String @unique
   description String @db.Text
   price Float
   count Int
@@ -42,7 +42,7 @@ model Product {
 }
 
 model Order {
-  id Int @id @default(autoincrement())
+  id Int @id @unique @default(autoincrement())
   userId Int
   status String
   user User @relation(fields: [userId], references: [id])
@@ -52,9 +52,9 @@ model Order {
 }
 
 model OrderDetail {
-  id Int @id @default(autoincrement())
+  id Int @id @unique @default(autoincrement())
   orderId Int
-  productId String
+  productId Int
   count Int
   price Float
   order     Order   @relation(fields: [orderId], references: [id])

@@ -18,7 +18,7 @@ async function getRange(skip: number, take: number): Promise<Product[]> {
   })
 }
 
-async function getById(id: string): Promise<Product | null> {
+async function getById(id: number): Promise<Product | null> {
   return await prismaClient.product.findUnique({
     where: {
       id
@@ -27,12 +27,14 @@ async function getById(id: string): Promise<Product | null> {
 }
 
 async function create(product: Omit<Product, 'id'>): Promise<void> {
+  console.log("Consulta")
+
   await prismaClient.product.create({
     data: product
   })
 }
 
-async function updateById(id: string, product: Omit<Product, 'id'>): Promise<void> {
+async function updateById(id: number, product: Omit<Product, 'id'>): Promise<void> {
   await prismaClient.product.update({
     where: {
       id
@@ -41,7 +43,7 @@ async function updateById(id: string, product: Omit<Product, 'id'>): Promise<voi
   })
 }
 
-async function removeById(id: string): Promise<void> {
+async function removeById(id: number): Promise<void> {
   await prismaClient.product.delete({
     where: {
       id
@@ -49,7 +51,7 @@ async function removeById(id: string): Promise<void> {
   })
 }
 
-async function updateQuantityById(id: string, count: number): Promise<void> {
+async function updateQuantityById(id: number, count: number): Promise<void> {
   await prismaClient.product.update({
     where: {
       id
@@ -60,7 +62,7 @@ async function updateQuantityById(id: string, count: number): Promise<void> {
   })
 }
 
-async function updateAvailability(id: string, availability: string): Promise<void> {
+async function updateAvailability(id: number, availability: string): Promise<void> {
   await prismaClient.product.update({
     where: {
       id
@@ -71,7 +73,7 @@ async function updateAvailability(id: string, availability: string): Promise<voi
   })
 }
 
-async function updatePriceById(id: string, price: number): Promise<void> {
+async function updatePriceById(id: number, price: number): Promise<void> {
   await prismaClient.product.update({
     where: {
       id

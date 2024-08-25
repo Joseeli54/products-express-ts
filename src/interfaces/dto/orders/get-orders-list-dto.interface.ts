@@ -6,7 +6,7 @@ export interface GetOrdersListDto {
       updatedAt: Date
       OrderDetail: {
         product: {
-          id: string
+          id: number
           name: string
           description: string
           count: number

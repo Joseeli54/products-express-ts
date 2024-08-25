@@ -1,6 +1,6 @@
 export interface CreateOrderDto {
     products: {
-      id: string
+      id: number
       count_products: number
     }[]
 }

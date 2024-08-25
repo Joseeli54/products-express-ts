@@ -5,7 +5,8 @@ import { User } from '../models/users.model'
 import { usersRepository } from '../repositories/users.repository'
 import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
-import { SignUpSchema, updateUserSchema } from '../schema/users.schema'
+import { createUserSchema, updateUserSchema } from '../schema/users.schema'
+import { InternalException } from '../exceptions/internal-exception.exception'
 
 async function getListOrders(skip: number, limit: number): Promise<Result<User[]>> {
     let users: User[]
@@ -15,14 +16,7 @@ async function getListOrders(skip: number, limit: number): Promise<Result<User[]
       users = await usersRepository.getRange(skip, limit)
       count = await usersRepository.count()
     } catch {
-      return {
-        success: false,
-        data: [],
-        errors: ['Unexpected server error.'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'Could not get the users list due to unexpected error'
-      }
+      throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {
@@ -45,14 +39,7 @@ async function getUserById(id: number): Promise<Result<User | null>> {
     try {
       user = await usersRepository.getById(id)
     } catch {
-      return {
-        success: false,
-        data: null,
-        errors: ['User could not be retrieved because an unexpected error occurred'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'An error occurred while retrieving the user'
-      }
+      throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     if (!user) {
@@ -78,7 +65,7 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
     let data = { name: user.name, email: user.email, role : user.role, password : password }
 
     try{
-        SignUpSchema.parse(data)
+      createUserSchema.parse(data)
     }catch(err:any){
         let errors = []
 
@@ -86,8 +73,6 @@ async function createUser(user: Omit<User, 'id' | 'password'>, password: string)
             let message = err.issues[index].message;
             errors.push(message)
         }
-
-        console.log(errors)
 
         return {
             success: false,

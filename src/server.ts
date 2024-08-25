@@ -4,6 +4,7 @@ import rootRouter from "./routes/index.routes";
 import { PrismaClient } from "@prisma/client";
 import { errorMiddleware } from "./middlewares/errors.middleware";
 import { SignUpSchema } from "./schema/users.schema";
+import { setupSwagger } from "./swagger/swagger";
 
 const app:Express = express();
 
@@ -16,6 +17,8 @@ export const prismaClient = new PrismaClient({
 })
 
 app.use(errorMiddleware)
+
+setupSwagger(app)
 
 app.get('/', (req, res) => {
     res.send('Welcome to the server management products!')

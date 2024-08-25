@@ -2,7 +2,7 @@ import { Product } from "./product.model";
 
 export interface OrderDetail {
     orderId: number
-    productId: string
+    productId: number
     count: number
     price: number
     product: Product

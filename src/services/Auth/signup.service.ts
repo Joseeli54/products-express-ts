@@ -7,6 +7,7 @@ import { prismaClient } from "../../server"
 import { Errors } from "../../types/errors.model"
 import { Role } from "../../types/roles.model"
 import { SignUpSchema } from "../../schema/users.schema"
+import { InternalException } from "../../exceptions/internal-exception.exception"
 
 async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: string): Promise<Result<any>> {
 
@@ -59,15 +60,8 @@ async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: st
     // Save user
     try {
       await usersRepository.create(userS)
-    } catch {
-      return {
-        success: false,
-        data: null,
-        errors: ['User could not be created because an unexpected error occurred'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'An error occurred while creating the user'
-      }
+    } catch (err) {
+      throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
     }
   
     return {

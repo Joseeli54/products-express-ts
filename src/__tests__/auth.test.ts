@@ -9,8 +9,8 @@ import { hashSync } from 'bcrypt';
 jest.mock('../../src/repositories/users.repository.ts')
 
 let userLogin = {
-    email: 'test@gmail.com',
-    password: 'abc123'
+    email: 'felipe.arroyo@gmail.com',
+    password: 'Password123!'
 }
 
 beforeEach(() => {

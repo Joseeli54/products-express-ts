@@ -17,65 +17,45 @@ export const listProduct = async (req: Request, res: Response, next: NextFunctio
     const skip = (page - 1) * limit
     const serviceResult = await productsService.getListProducts(skip, limit)
 
-    if(!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
-
     const response: GetListProductsResponseDto = {
         products: serviceResult.data
     }
 
-    res.json(response)
+    return res.json({success: true, response, message: "The product list is obtain successfully"})
 }
 
 export const createProduct = async (req: Request, res: Response) => {
-    try{
-        const body : CreateProductRequestDto = req.body
-        const serviceResult = await productsService.createProduct(body)
-        res.json(serviceResult)
-    } catch(err){
-        throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
-    }
+    const body : CreateProductRequestDto = req.body
+    const serviceResult = await productsService.createProduct(body)
+    return res.json(serviceResult)
 }
 
 export const updateProduct = async (req: Request, res: Response) => {
-    try{
-        const body : UpdateProductRequestDto = req.body
-        const id = req.params.id
-        const serviceResult = await productsService.updateProductById(body, id)
-        res.json(serviceResult)
-    } catch(err){
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
-    }
+    const body : UpdateProductRequestDto = req.body
+    const id = Number(req.params.id)
+    const serviceResult = await productsService.updateProductById(body, id)
+    return res.json(serviceResult)
 }
 
 export const deleteProduct = async (req: Request, res: Response) => {
-    try{
-        const id = req.params.id
-        const serviceResult = await productsService.deleteProductById(id)
-        res.json(serviceResult)
-    }catch{
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
-    }
+    const id = Number(req.params.id)
+    const serviceResult = await productsService.deleteProductById(id)
+    return res.json(serviceResult)
 }
 
 export const getProductById = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const id = req.params.id
-        const serviceResult = await productsService.getProductById(id)
-      
-        if (!serviceResult.success || !serviceResult.data) throw new InternalException('Something went wrong!', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
+    const id = Number(req.params.id)
+    const serviceResult = await productsService.getProductById(id)
 
-        const response: GetProductByIdResponseDto = {
-            name: serviceResult.data.name,
-            description: serviceResult.data.description,
-            price: serviceResult.data.price,
-            count: serviceResult.data.count,
-            availability: serviceResult.data.availability,
-            createdAt: serviceResult.data.createdAt,
-            updatedAt: serviceResult.data.updatedAt
-        }
-        res.json(response)
-
-    }catch{
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
+    const response: GetProductByIdResponseDto = {
+        name: serviceResult.data!.name,
+        description: serviceResult.data!.description,
+        price: serviceResult.data!.price,
+        count: serviceResult.data!.count,
+        availability: serviceResult.data!.availability,
+        createdAt: serviceResult.data!.createdAt,
+        updatedAt: serviceResult.data!.updatedAt
     }
+
+    return res.json({success: true, response, message: "Product obtain successfully"})
 }
