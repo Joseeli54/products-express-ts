@@ -9,6 +9,7 @@ import { prismaClient } from '../server'
 import { Errors } from '../types/errors.model'
 
 async function getListOrders(skip: number, limit: number): Promise<Result<Order[]>> {
+    //Get all orders in a list, configure the pagination with skip and limit.
     let orders: Order[]
     let count: number
   

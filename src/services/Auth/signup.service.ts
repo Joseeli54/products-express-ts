@@ -8,10 +8,13 @@ import { Errors } from "../../types/errors.model"
 import { Role } from "../../types/roles.model"
 import { SignUpSchema } from "../../schema/users.schema"
 import { InternalException } from "../../exceptions/internal-exception.exception"
+import { sendMail } from "../../mailer/mailer"
 
 async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: string): Promise<Result<any>> {
-
+    //Create de user with the name, email and password
     let body = {name: data.name, email: data.email, password: password}
+
+    //Verify that the data is correct and format type
     try{
         SignUpSchema.parse(body)
     }catch(err:any){
@@ -60,6 +63,14 @@ async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: st
     // Save user
     try {
       await usersRepository.create(userS)
+
+      const from: string = `Create Account" <` + process.env.MAIL_HOST + `>`;
+      const to: string = user.email;
+      const subject: string = 'Create Account - Product Express';
+      const mailTemplate: string = `<p>Hello `+ user.name + `,</p>
+                                    <p>Thank you for signing up for our trial API called Product Express.</p>`;
+      //The email is sent at the time of registration, if the email does not exist or there is an error, the process will continue.
+      sendMail( from, to, subject, mailTemplate);
     } catch (err) {
       throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
     }
