@@ -17,8 +17,8 @@ This is a test project used to create an example API with the Node.js tool, Type
   `$ cd /path/to/products-express-ts`
 - #### Step 3: Install the dependencies required for API execution:
   `$ npm install`
-- #### Step 4: In the project directory this file `.example.env`, copy the file and name it `.env`. It can also be done from the terminal:
-  `$ cp .example.env .env`
+- #### Step 4: In the project directory this file `.env.example`, copy the file and name it `.env`. It can also be done from the terminal:
+  `$ cp .env.example .env`
 
 # ⚙️ Configuration of the .env file.
 
