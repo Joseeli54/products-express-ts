@@ -74,7 +74,7 @@ This will allow you to view user, product and order records easily, as well as r
 
   Once this command is executed, a port will be opened to make HTTP requests. This port is configured in the `.env` file in the `PORT` variable. The generated route should be the following: `http://localhost:PORT`
 
-# ▶️ Running the tests in the API
+# 🧪 Running the tests in the API
 
 - Run all the tests carried out to verify that the functionality is executed correctly:
 
@@ -85,6 +85,18 @@ This will allow you to view user, product and order records easily, as well as r
    `$ npm run test:unit`
 
   In both commands, the `PORT` variable was configured to be 0, because we are working in test mode.
+
+# 🗎 Running the OpenAPI documentation with Swagger UI
+
+- Firstly, the information must be prepared with the `definition.yaml` file, where the following command is executed: 
+
+  `$ npm run schemas:openapi`
+
+- Now, the project must be run in development mode:
+
+  `$npm run dev`
+
+  Once the API is executed, you must enter the path `http://localhost:PORT/docs` to see the API document, whose `PORT` is the one configured in the `.env` file.
 
 # ℹ️ Source code editor and compiler
 
