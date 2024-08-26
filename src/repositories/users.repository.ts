@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { User } from '../models/users.model'
 import { Role } from '../types/roles.model'
+import { compareSync } from 'bcrypt'
 
 const prismaClient = new PrismaClient()
 
@@ -66,7 +67,19 @@ async function getByEmail(email: string): Promise<User | null> {
         role: user.role as Role
     }
 }
-  
+
+async function getExistsEmail(email: string) : Promise<boolean> {
+  return Boolean(await prismaClient.user.findFirst({where: {email}}))
+}
+
+async function comparePassword(passwordSend: string, passwordUser: string) : Promise<boolean> {
+
+  if(!compareSync(passwordSend, passwordUser)){
+    return false;
+  }
+
+  return true;
+}
   
 async function create(user: Omit<User, 'id'>): Promise<void> {
     //create user
@@ -102,5 +115,7 @@ export const usersRepository = {
     getByEmail,
     create,
     update,
-    remove
+    remove,
+    getExistsEmail,
+    comparePassword
 }

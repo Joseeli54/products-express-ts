@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { errorMiddleware } from "./middlewares/errors.middleware";
 import { SignUpSchema } from "./schema/users.schema";
 import { setupSwagger } from "./swagger/swagger";
+import { usersRepository } from "./repositories/users.repository";
 
 const app:Express = express();
 

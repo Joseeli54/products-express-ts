@@ -92,6 +92,14 @@ async function updatePriceById(id: number, price: number): Promise<void> {
   })
 }
 
+async function sameName(nameSend: string, nameDB: string){
+  if(nameSend == nameDB){
+    return true;
+  }
+
+  return false;
+}
+
 export const productsRepository = {
   count,
   getAll,
@@ -102,5 +110,6 @@ export const productsRepository = {
   removeById,
   updateQuantityById,
   updatePriceById,
-  updateAvailability
+  updateAvailability,
+  sameName
 }

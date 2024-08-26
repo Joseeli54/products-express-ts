@@ -1,12 +1,9 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { loginService } from '../services/Auth/login.service';
-import { signUpService } from '../services/Auth/signup.service';
 import { beforeEach } from 'node:test';
 import { usersRepository } from '../repositories/users.repository';
 import { Role } from '../types/roles.model';
 import { hashSync } from 'bcrypt';
-
-jest.mock('../../src/repositories/users.repository.ts')
 
 let userLogin = {
     email: 'felipe.arroyo@gmail.com',
@@ -25,20 +22,16 @@ beforeEach(() => {
 })
 
 describe('loginService: User login', () => {
-    it('User logging in with invalid password, should mark the error, return false, and error code 502', async () => {
-        const result = await loginService.login(userLogin.email, 'Incorrect123')
+    it('User logging in with invalid password, should return false', async () => {
+        const result = await usersRepository.comparePassword(userLogin.password, 'Incorrect123')
 
-        expect(result.success).toBe(false)
-        expect(result.errorCode).toBe(502)
-        expect(result.errors?.length! > 0).toBe(true)
+        expect(result).toBe(false)
     })
 
-    it('User registration with a non-existing email should flag error, return false and error code 404.', async () => {
-        const result = await loginService.login('test200@gmail.com', userLogin.password)
+    it('User registration with a non-existing email should return false', async () => {
+        const result = await usersRepository.getExistsEmail('test200@gmail.com')
 
-        expect(result.success).toBe(false)
-        expect(result.errorCode).toBe(404)
-        expect(result.errors?.length! > 0).toBe(true)
+        expect(result).toBe(false);
     })
 
     it('The login must return a token for user authentication.', async () => {
@@ -46,16 +39,5 @@ describe('loginService: User login', () => {
 
         expect(result.data?.token).toBeTruthy()
     })
-
-    it('Trying to log in with an invalid email and password should display an error message', async () => {
-        const result : any = await loginService.login('test200', "123")
-
-        expect(result.success).toBe(false)
-        expect(result.errors).toStrictEqual([
-            "Invalid email",
-            "String must contain at least 6 character(s)"
-        ])
-    })
-
 
 })

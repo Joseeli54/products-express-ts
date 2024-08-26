@@ -166,6 +166,16 @@ async function update(id: number, status: string, updatedAt: Date): Promise<void
     })
 }
 
+async function statusIncorrect(status : string){
+  let statusArray = ["Pending", "In Progress", "Completed"];
+
+  if(!statusArray.includes(status)){
+    return true;
+  }
+
+  return false;
+}
+
 export const ordersRepository = {
     count,
     countByUserId,
@@ -176,6 +186,7 @@ export const ordersRepository = {
     getById,
     create,
     remove,
-    update
+    update,
+    statusIncorrect
 }
   

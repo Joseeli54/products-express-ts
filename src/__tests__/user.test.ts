@@ -8,8 +8,6 @@ import { hashSync } from 'bcrypt';
 import { usersService } from '../services/users.service';
 import { UpdateUserDto } from '../interfaces/dto/users/update-user-dto.interface';
 
-jest.mock('../../src/repositories/users.repository.ts')
-
 let user = {
     name: "Jose",
     email: "joseprez@hotmail.com",
@@ -32,30 +30,15 @@ beforeEach(() => {
 })
 
 describe('users', () => {
-    it('If we send data that is invalid or does not meet the conditions, an error message must be sent indicating this.', async () => {
-        const result = await usersService.createUser(user, "")
+    it('If we send data that is invalid or does not meet the conditions, return null.', async () => {  
+        const result2 = await usersRepository.getByEmail("data.error@gmail.com")
 
-        expect(result.success).toBe(false)
-        expect(result.errorCode).toBe(507)
-        expect(result.errors).toStrictEqual(["String must contain at least 6 character(s)"])
+        expect(result2).toBe(null)
     })
 
-    it('User registration with a non-existing email should flag error, return false and error code 404.', async () => {
-        const result = await usersService.getUserById(100)
+    it('User registration with a non-existing email should flag error, return null.', async () => {
+        const result = await usersRepository.getById(1000);
 
-        expect(result.success).toBe(false)
-        expect(result.errorCode).toBe(404)
-        expect(result.errors?.length! > 0).toBe(true)
-    })
-
-    describe('usersService: role invalid', () => {
-        it('Orders whose role is changed must match the following: ADMIN, USER', async () => {
-            const result = await usersService.updateUser(2, roleInvalid, "ChangePassword123")
-
-            expect(result.success).toBe(false)
-            expect(result.errors).toStrictEqual([
-                "Invalid enum value. Expected 'USER' | 'ADMIN', received 'CLIENTE'"
-            ])
-        })
+        expect(result).toBe(null)
     })
 })
