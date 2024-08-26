@@ -1,5 +1,7 @@
 import { InternalException } from '../exceptions/internal-exception.exception'
+import { NotFoundException } from '../exceptions/not-found.exception'
 import { ErrorCode } from '../exceptions/root.exception'
+import { UnprocessableEntity } from '../exceptions/validation.exception'
 import { Result } from '../interfaces/results/results.interface'
 import { Order } from '../models/order.model'
 import { ordersRepository } from '../repositories/orders.repository'
@@ -12,12 +14,32 @@ async function getListOrders(skip: number, limit: number): Promise<Result<Order[
     //Get all orders in a list, configure the pagination with skip and limit.
     let orders: Order[]
     let count: number
+
+    if(limit.toString() == "NaN"){
+      throw new UnprocessableEntity(["The 'limit' parameters isn't exist"], "The 'limit' parameters are not being included in the sent request. Example:'/?limit=n'", Errors.INVALID, ErrorCode.INVALID) 
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters' 
+    }
+  
+    if(skip.toString() == "NaN"){
+      throw new UnprocessableEntity(["The 'page' parameters isn't exist"], "The 'page' parameters are not being included in the sent request. Example:'/?page=n'", Errors.INVALID, ErrorCode.INVALID) 
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters' 
+    }
   
     try {
       orders = await ordersRepository.getRange(skip, limit)
       count = await ordersRepository.count()
-    } catch {
-        throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
+    } catch (err) {
+        throw new InternalException('Server error, contact an administrator.', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+        //   errors: err,
+        //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+        //   errorType: Errors.INTERNAL_EXCEPTION,
+        //   message: 'Server error, contact an administrator.'   
     }
   
     return {
@@ -36,13 +58,33 @@ async function getListOrders(skip: number, limit: number): Promise<Result<Order[
 async function getListOrdersCurrentUser(skip: number, limit: number, authUser: any): Promise<Result<Order[]>> {
     let orders: Order[]
     let count: number
+
+    if(limit.toString() == "NaN"){
+      throw new UnprocessableEntity(["The 'limit' parameters isn't exist"], "The 'limit' parameters are not being included in the sent request. Example:'/?limit=n'", Errors.INVALID, ErrorCode.INVALID) 
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters' 
+    }
+  
+    if(skip.toString() == "NaN"){
+      throw new UnprocessableEntity(["The 'page' parameters isn't exist"], "The 'page' parameters are not being included in the sent request. Example:'/?page=n'", Errors.INVALID, ErrorCode.INVALID) 
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters' 
+    }
   
     //The variable id of the current server user is taken, which was saved by the User Authentication Middleware.
     try {
       orders = await ordersRepository.getRangeByUserId(skip, limit, authUser.id)
       count = await ordersRepository.countByUserId(authUser.id)
-    } catch {
-        throw new InternalException('Server error, contact an administrator.', Errors.INTERNAL_EXCEPTION, ErrorCode.INTERNAL_EXCEPTION)
+    } catch (err) {
+      throw new InternalException('Server error, contact an administrator.', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+      //   errors: err,
+      //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+      //   errorType: Errors.INTERNAL_EXCEPTION,
+      //   message: 'Server error, contact an administrator.'   
     }
   
     return {
@@ -62,32 +104,43 @@ async function getListOrderByIdUser(skip: number, limit: number, userId: number)
     let orders: Order[]
     let count: number
 
+    if(limit.toString() == "NaN"){
+      throw new UnprocessableEntity(["The 'limit' parameters isn't exist"], "The 'limit' parameters are not being included in the sent request. Example:'/?limit=n'", Errors.INVALID, ErrorCode.INVALID) 
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters' 
+    }
+  
+    if(skip.toString() == "NaN"){
+      throw new UnprocessableEntity(["The 'page' parameters isn't exist"], "The 'page' parameters are not being included in the sent request. Example:'/?page=n'", Errors.INVALID, ErrorCode.INVALID) 
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters' 
+    }
+
     let user = await prismaClient.user.findFirst({where: {id: userId}})
     
     //If the user no exist, then return NOT_FOUND
     if(!user)
-        return {
-            success: false,
-            data: [],
-            errors: ['User not found.'],
-            errorCode: ErrorCode.USER_NOT_FOUND,
-            errorType: Errors.NOT_FOUND,
-            message: "Unable to get orders, because the user does not exist."
-        }
+      throw new NotFoundException("Unable to get orders, because the user does not exist.", ErrorCode.USER_NOT_FOUND, Errors.NOT_FOUND, ["Order does not exist"])
+        //     message: "Failed to log in because the user does not exist",
+        //     data: null,
+        //     errorCode: ErrorCode.USER_NOT_FOUND,
+        //     errorType: Errors.NOT_FOUND,
+        //     errors: ["User does not exist"]
 
     //In this try, get orders with the pagination specify by the client app.
     try {
         orders = await ordersRepository.getRangeByUserId(skip, limit, userId)
         count = await ordersRepository.countByUserId(userId)
-    } catch {
-        return {
-            success: false,
-            data: [],
-            errors: ['Unexpected server error.'],
-            errorCode: ErrorCode.INTERNAL_EXCEPTION,
-            errorType: Errors.INTERNAL_EXCEPTION,
-            message: 'Could not get the products list due to unexpected error'
-        }
+    } catch (err) {
+        throw new InternalException('Could not get the products list due to unexpected error', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+        //   errors: err,
+        //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+        //   errorType: Errors.INTERNAL_EXCEPTION,
+        //   message: 'Could not get the products list due to unexpected error'        
     }
 
     return {
@@ -111,21 +164,12 @@ async function getOrderById(id: number): Promise<Result<Order | null>> {
   try{
     getOrderSchema.parse(data)
   }catch(err:any){
-      let errors = []
-
-      for (let index = 0; index < err.issues.length; index++) {
-          let message = err.issues[index].message;
-          errors.push(message)
-      }
-
-      return {
-          success: false,
-          message: "Could not get order due to some invalid parameters",
-          data: null,
-          errorCode: ErrorCode.INVALID,
-          errorType: Errors.INVALID,
-          errors: errors
-      }
+      throw new UnprocessableEntity(err.issues, "Could not get order due to some invalid parameters", Errors.INVALID, ErrorCode.INVALID)        
+      //     message: "Could not get order due to some invalid parameters",
+      //     data: null,
+      //     errorCode: ErrorCode.INVALID,
+      //     errorType: Errors.INVALID,
+      //     errors: err.issues
   }
 
   let order: Order | null
@@ -134,27 +178,21 @@ async function getOrderById(id: number): Promise<Result<Order | null>> {
   // Get order
   try {
     order = await ordersRepository.getById(id)
-  } catch {
-    return {
-      success: false,
-      data: null,
-      errors: ['Order could not be retrieved because an unexpected error occurred'],
-      errorCode: ErrorCode.INTERNAL_EXCEPTION,
-      errorType: Errors.INTERNAL_EXCEPTION,
-      message: 'An error occurred while retrieving order'
-    }
+  } catch (err) {
+    throw new InternalException('Could not get the products list due to unexpected error', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+    //   errors: err,
+    //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+    //   errorType: Errors.INTERNAL_EXCEPTION,
+    //   message: 'Could not get the products list due to unexpected error'    
   }
 
   // If the order is not exists, return error NOT_FOUND
   if (!order) {
-    return {
-      success: false,
-      data: null,
-      errors: ['Order not found'],
-      errorCode: ErrorCode.USER_NOT_FOUND,
-      errorType: Errors.NOT_FOUND,
-      message: 'Order could not be retrieved due to verification errors'
-    }
+    throw new NotFoundException("Order could not be retrieved due to verification errors", ErrorCode.USER_NOT_FOUND, Errors.NOT_FOUND, ["Order not found"])
+    //   errors: ['Order not found'],
+    //   errorCode: ErrorCode.USER_NOT_FOUND,
+    //   errorType: Errors.NOT_FOUND,
+    //   message: 'Order could not be retrieved due to verification errors'
   }
 
   return {
@@ -185,14 +223,12 @@ async function createOrder( products: {id: number, count_products: number}[],aut
 
     // If there errors, then return error CONFLICT
     if (errors.length > 0) {
-        return {
-          success: false,
-          errors,
-          data: undefined,
-          errorCode: ErrorCode.INVALID,
-          errorType: Errors.INVALID,
-          message: `The order could not be created due to these validation errors: ${errors}`
-        }
+        throw new UnprocessableEntity(errors, `The order could not be created due to these validation errors: ${errors}`, Errors.INVALID, ErrorCode.INVALID)        
+        //     message: "The order could not be created due to these validation errors: ${errors}",
+        //     data: null,
+        //     errorCode: ErrorCode.INVALID,
+        //     errorType: Errors.INVALID,
+        //     errors: errors      
     }
 
     /////////////////////// Initialization and processing /////////////////////////
@@ -213,27 +249,24 @@ async function createOrder( products: {id: number, count_products: number}[],aut
       const product = await productsRepository.getById(orderDetail.productId)
   
       if (!product) {
-        return {
-          success: false,
-          data: undefined,
-          errors: [`Product with id ${orderDetail.productId} not found`],
-          errorCode: ErrorCode.USER_NOT_FOUND,
-          errorType: Errors.NOT_FOUND,
-          message: 'The order could not be created because the product was not found.'
-        }
+        throw new NotFoundException("The order could not be created because the product was not found.", ErrorCode.USER_NOT_FOUND, Errors.NOT_FOUND, [`Product with id ${orderDetail.productId} not found`])
+        //   errors: [`Product with id ${orderDetail.productId} not found`],
+        //   errorCode: ErrorCode.USER_NOT_FOUND,
+        //   errorType: Errors.NOT_FOUND,
+        //   message: 'The order could not be created because the product was not found.'
       }
   
       if (product.count < orderDetail.count_products) {
-        return {
-          success: false,
-          data: undefined,
-          errors: [
-            `The product with the identifier ${orderDetail.productId} does not have enough stock, therefore, it is not available to be obtained. (current stock = ${product.count})`
-          ],
-          errorCode: ErrorCode.UNPROCESSABLE_ENTITY,
-          errorType: Errors.UNPROCESSABLE_ENTITY,
-          message: 'Order could not be created due to verification errors'
-        }
+        throw new UnprocessableEntity([
+          `The product with the identifier ${orderDetail.productId} does not have enough stock, therefore, it is not available to be obtained. (current stock = ${product.count})`
+        ], `Order could not be created due to verification errors`, Errors.CONFLICT, ErrorCode.CONFLICT)  
+            
+        // errors: [
+        //   `The product with the identifier ${orderDetail.productId} does not have enough stock, therefore, it is not available to be obtained. (current stock = ${product.count})`
+        // ],
+        // errorCode: ErrorCode.CONFLICT,
+        // errorType: Errors.CONFLICT,
+        // message: 'Order could not be created due to verification errors'
       }
   
       //If there has been no error. The value of the price and the quantity of the stock is assigned
@@ -270,15 +303,12 @@ async function createOrder( products: {id: number, count_products: number}[],aut
         }
 
       }
-    } catch {
-      return {
-        success: false,
-        data: undefined,
-        errors: ['Order could not be created because an unexpected error occurred'],
-        errorCode: ErrorCode.INTERNAL_EXCEPTION,
-        errorType: Errors.INTERNAL_EXCEPTION,
-        message: 'An error occurred while creating order'
-      }
+    } catch (err) {
+      throw new InternalException('An error occurred while creating order', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+      //   errors: err,
+      //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+      //   errorType: Errors.INTERNAL_EXCEPTION,
+      //   message: 'An error occurred while creating order'
     }
   
     return {
@@ -294,29 +324,23 @@ async function deleteOrder(id: number): Promise<Result<void>> {
   // If the order exist, then process to delete of the order
   const order = await ordersRepository.getById(id)
   if (!order) {
-    return {
-      success: false,
-      data: undefined,
-      errors: ['Order not found'],
-      errorCode: ErrorCode.USER_NOT_FOUND,
-      errorType: Errors.NOT_FOUND,
-      message: 'The order could not be deleted because it does not exist.'
-    }
+    throw new NotFoundException("The order could not be deleted because it does not exist.", ErrorCode.USER_NOT_FOUND, Errors.NOT_FOUND, ['Order not found'])
+    //   errors: ['Order not found'],
+    //   errorCode: ErrorCode.USER_NOT_FOUND,
+    //   errorType: Errors.NOT_FOUND,
+    //   message: 'The order could not be deleted because it does not exist.'
   }
 
   //////////////// Processing /////////////
   // Delete order
   try {
     await ordersRepository.remove(id)
-  } catch {
-    return {
-      success: false,
-      data: undefined,
-      errors: ['Order could not be deleted because an unexpected error occurred'],
-      errorCode: ErrorCode.INTERNAL_EXCEPTION,
-      errorType: Errors.INTERNAL_EXCEPTION,
-      message: 'An error occurred while deleting order'
-    }
+  } catch (err) {
+    throw new InternalException('An error occurred while deleting order', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+    //   errors: err,
+    //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+    //   errorType: Errors.INTERNAL_EXCEPTION,
+    //   message: 'An error occurred while creating order'
   }
 
   return {
@@ -336,21 +360,11 @@ async function updateOrder(id: number, status: string): Promise<Result<void>> {
   try{
     OrderSchema.parse(data)
   }catch(err:any){
-      let errors = []
-
-      for (let index = 0; index < err.issues.length; index++) {
-          let message = err.issues[index].message;
-          errors.push(message)
-      }
-
-      return {
-          success: false,
-          message: "Could not create product due to some invalid parameters",
-          data: undefined,
-          errorCode: ErrorCode.INVALID,
-          errorType: Errors.INVALID,
-          errors: errors
-      }
+      throw new UnprocessableEntity(err.issues, `Could not create product due to some invalid parameters`, Errors.INVALID, ErrorCode.INVALID)  
+      // errors: errors
+      // errorCode: ErrorCode.INVALID,
+      // errorType: Errors.INVALID,
+      // message: 'Could not create product due to some invalid parameters'
   }
 
   /////////////////////// Processing /////////////////////////
@@ -358,39 +372,30 @@ async function updateOrder(id: number, status: string): Promise<Result<void>> {
   const order = await ordersRepository.getById(id)
 
   if (!order) {
-    return {
-      success: false,
-      data: undefined,
-      errors: ['Order not found'],
-      errorCode: ErrorCode.USER_NOT_FOUND,
-      errorType: Errors.NOT_FOUND,
-      message: 'The order could not be updated because it does not exist.'
-    }
+    throw new NotFoundException("The order could not be updated because it does not exist.", ErrorCode.USER_NOT_FOUND, Errors.NOT_FOUND, ['Order not found'])
+    //   errors: ['Order not found'],
+    //   errorCode: ErrorCode.USER_NOT_FOUND,
+    //   errorType: Errors.NOT_FOUND,
+    //   message: 'The order could not be updated because it does not exist.'
   }
 
   if (order.status === status) {
-    return {
-      success: false,
-      data: undefined,
-      errors: ['Order status is already set to the specified status'],
-      errorCode: ErrorCode.CONFLICT,
-      errorType: Errors.CONFLICT,
-      message: 'Order status could not be updated due to verification errors'
-    }
+      throw new UnprocessableEntity(['Order status is already set to the specified status'], `Order status could not be updated due to verification errors`, Errors.CONFLICT, ErrorCode.CONFLICT)  
+      // errors: ['Order status is already set to the specified status'],
+      // errorCode: ErrorCode.CONFLICT,
+      // errorType: Errors.CONFLICT,
+      // message: 'Order status could not be updated due to verification errors'
   }
 
   // Updating the status of the order and its modification date
   try {
     await ordersRepository.update(id, status, new Date())
-  } catch {
-    return {
-      success: false,
-      data: undefined,
-      errors: ['Order status could not be updated because an unexpected error occurred'],
-      errorCode: ErrorCode.INTERNAL_EXCEPTION,
-      errorType: Errors.INTERNAL_EXCEPTION,
-      message: 'An error occurred while updating order status'
-    }
+  } catch (err) {
+    throw new InternalException('An error occurred while updating order status', err,  ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+    //   errors: err,
+    //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+    //   errorType: Errors.INTERNAL_EXCEPTION,
+    //   message: 'An error occurred while creating order'
   }
 
   return {

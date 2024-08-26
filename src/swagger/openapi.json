@@ -130,17 +130,17 @@
               }
             }
           },
+          "401": {
+            "description": "The request was not rejected, because the password user is incorrect."
+          },
           "404": {
             "description": "The request was invalid because the user was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "502": {
-            "description": "The request was not successful because the password was incorrect."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       }
@@ -226,14 +226,11 @@
               }
             }
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a user already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       }
@@ -382,14 +379,11 @@
           "404": {
             "description": "The request was invalid because the product was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a product already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -591,14 +585,11 @@
           "404": {
             "description": "The request was invalid because the product was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a product already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -658,14 +649,11 @@
           "404": {
             "description": "The request was invalid because the product was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "505": {
-            "description": "The request was not successful, due to a conflict when deleting it. It may be that there is another record that depends on it."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -732,14 +720,11 @@
           "401": {
             "description": "The request was not rejected, because the user does not have permissions or is not authenticated."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a product already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       }
@@ -831,14 +816,11 @@
           "404": {
             "description": "The request was invalid because the order was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a order already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -932,6 +914,9 @@
           },
           "401": {
             "description": "The request was not rejected, because the user does not have permissions or is not authenticated."
+          },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
@@ -1040,6 +1025,9 @@
           "401": {
             "description": "The request was not rejected, because the user does not have permissions or is not authenticated."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
           }
@@ -1137,6 +1125,9 @@
           },
           "401": {
             "description": "The request was not rejected, because the user does not have permissions or is not authenticated."
+          },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
@@ -1305,14 +1296,11 @@
           "404": {
             "description": "The request was invalid because the order was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a order already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -1372,14 +1360,11 @@
           "404": {
             "description": "The request was invalid because the order was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "505": {
-            "description": "The request was not successful, due to a conflict when deleting it. It may be that there is another record that depends on it."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       }
@@ -1473,14 +1458,11 @@
           "404": {
             "description": "The request was invalid because the user was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a user already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -1645,14 +1627,11 @@
           "401": {
             "description": "The request was not rejected, because the user does not have permissions or is not authenticated."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a user already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -1753,14 +1732,11 @@
           "404": {
             "description": "The request was invalid because the user was found."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a user already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       },
@@ -1820,14 +1796,11 @@
           "401": {
             "description": "The request was not rejected, because the user does not have permissions or is not authenticated."
           },
+          "422": {
+            "description": "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
+          },
           "500": {
             "description": "The request was not successful because there was an unexpected error."
-          },
-          "501": {
-            "description": "The request was not successful, because a user already exists."
-          },
-          "507": {
-            "description": "The request was not successful due to an error in data validation."
           }
         }
       }

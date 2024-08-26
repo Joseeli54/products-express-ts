@@ -8,31 +8,27 @@ export const signup = async (req: Request, res: Response) => {
     return res.json(response)
 }
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = req.body;
     const response = await loginService.login(email, password)
 
-    if(response.data?.token != undefined && response.data?.user != undefined){
-        let token = response.data?.token
-        let user = response.data?.user
+    let token = response.data?.token
+    let user = response.data?.user
 
-        if(process.env.NODE_ENV == 'production'){
-            return res
-            .cookie('JWT', token, {
-                                        httpOnly: true, 
-                                        sameSite: 'strict',
-                                        secure: true,
-                                        path: '/',
-                                        maxAge: 1000 * 60 * 60 * Number(process.env.COOKIES_EXPIRES_HOURS)
-                                }
-            )
-            .status(200)
-            .send({ success: true, user, message: "The user is logged successfully" })
-        }else{
-            return res.send({ success: true, user, message: "The user is logged successfully", token})
-        }
+    if(process.env.NODE_ENV == 'production'){
+        return res
+        .cookie('JWT', token, {
+                                    httpOnly: true, 
+                                    sameSite: 'strict',
+                                    secure: true,
+                                    path: '/',
+                                    maxAge: 1000 * 60 * 60 * Number(process.env.COOKIES_EXPIRES_HOURS)
+                            }
+        )
+        .status(200)
+        .send({ success: true, user, message: "The user is logged successfully" })
     }else{
-        return res.send(response)
+        return res.send({ success: true, user, message: "The user is logged successfully", token})
     }
 }
 

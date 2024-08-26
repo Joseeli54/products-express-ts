@@ -1,13 +1,9 @@
 import { Request, Response } from "express";
-import { ErrorCode } from "../exceptions/root.exception";
-import { InternalException } from "../exceptions/internal-exception.exception";
-import { Errors } from "../types/errors.model";
 import { usersService } from "../services/users.service";
 import { GetListUsersDto } from "../interfaces/dto/users/get-user-list-dto.interface";
 import { CreateUserDto } from "../interfaces/dto/users/create-user-dto.interface";
 import { UpdateUserDto } from "../interfaces/dto/users/update-user-dto.interface";
 import { GetUserDto } from "../interfaces/dto/users/get-user-dto.interface";
-import { SignUpSchema } from "../schema/users.schema";
 
 export const listUsers = async (req: Request, res: Response) => {
     const page = Number(req.query.page)

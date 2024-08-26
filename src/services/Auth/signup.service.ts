@@ -9,6 +9,7 @@ import { Role } from "../../types/roles.model"
 import { SignUpSchema } from "../../schema/users.schema"
 import { InternalException } from "../../exceptions/internal-exception.exception"
 import { sendMail } from "../../mailer/mailer"
+import { UnprocessableEntity } from "../../exceptions/validation.exception"
 
 async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: string): Promise<Result<any>> {
     //Create de user with the name, email and password
@@ -18,21 +19,12 @@ async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: st
     try{
         SignUpSchema.parse(body)
     }catch(err:any){
-        let errors = []
-
-        for (let index = 0; index < err.issues.length; index++) {
-            let message = err.issues[index].message;
-            errors.push(message)
-        }
-
-        return {
-            success: false,
-            message: "Could not create user due to some invalid parameters",
-            data: null,
-            errorCode: ErrorCode.INVALID,
-            errorType: Errors.INVALID,
-            errors: errors
-        }
+        throw new UnprocessableEntity(err.issues, "Could not create user due to some invalid parameters", Errors.INVALID, ErrorCode.INVALID)        
+        //     message: "Could not create user due to some invalid parameters",
+        //     data: null,
+        //     errorCode: ErrorCode.INVALID,
+        //     errorType: Errors.INVALID,
+        //     errors: err.issues
     }
       
     const user: Omit<User, 'id' | 'password'> = {
@@ -43,14 +35,13 @@ async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: st
     // Verify that user by the same email does not already exist
     let hasUser = await prismaClient.user.findFirst({where: {email: user.email}})
     if (hasUser) {
-      return {
-        success: false,
-        data: null,
-        errors: ['User already exist'],
-        errorCode: ErrorCode.USER_ALREADY_EXISTS,
-        errorType: Errors.ALREADY_EXISTS,
-        message: 'The email address for the account you are trying to create already exists.'
-      }
+      throw new UnprocessableEntity(['User already exist'], "The email address for the account you are trying to create already exists.", 
+                                    Errors.ALREADY_EXISTS, ErrorCode.USER_ALREADY_EXISTS)
+
+      //   errors: ['User already exist'],
+      //   errorCode: ErrorCode.USER_ALREADY_EXISTS,
+      //   errorType: Errors.ALREADY_EXISTS,
+      //   message: 'The email address for the account you are trying to create already exists.'
     }
   
     const userS: Omit<User, 'id'> = {
@@ -72,7 +63,11 @@ async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: st
       //The email is sent at the time of registration, if the email does not exist or there is an error, the process will continue.
       sendMail( from, to, subject, mailTemplate);
     } catch (err) {
-      throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION)
+      throw new InternalException('Error creating unexpected product', err, ErrorCode.INTERNAL_EXCEPTION, Errors.INTERNAL_EXCEPTION)
+      //   errors: err,
+      //   errorCode: ErrorCode.INTERNAL_EXCEPTION,
+      //   errorType: Errors.INTERNAL_EXCEPTION,
+      //   message: 'Error creating unexpected product'
     }
   
     return {

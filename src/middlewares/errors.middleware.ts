@@ -5,6 +5,7 @@ export const errorMiddleware = (error: HttpException, req: Request, res: Respons
     res.status(error.statusCode).json({
         message: error.message,
         errorCode: error.errorCode,
+        errorType: error.errorType,
         errors: error.errors
     })
 }

@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
-import { OrderSchema } from "../schema/orders.schema";
 import { CreateOrderDto } from "../interfaces/dto/orders/create-order-dto.interface";
 import { ordersService } from "../services/orders.service";
-import { ErrorCode } from "../exceptions/root.exception";
-import { NotFoundException } from "../exceptions/not-found.exception";
 import { GetOrdersListDto } from "../interfaces/dto/orders/get-orders-list-dto.interface";
 import { GetOrderDto } from "../interfaces/dto/orders/get-order-dto.interface";
 import { UpdateOrderStatusRequestDto } from "../interfaces/dto/orders/update-order-dto.interface";
@@ -146,33 +143,20 @@ export const getOrderById = async (req: any, res: Response) => {
 export const createOrder = async (req: any, res: Response) => {
     // Those products that are going to be ordered are added
     //req.user - It is the user who is logged in and was obtained through a token
-
-    try{
-        const body: CreateOrderDto = req.body
-        const serviceResult = await ordersService.createOrder(body.products, req.user)
-        res.json(serviceResult)
-    } catch(err){
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
-    }
+    const body: CreateOrderDto = req.body
+    const serviceResult = await ordersService.createOrder(body.products, req.user)
+    res.json(serviceResult)
 }
 
 export const deleteOrder = async (req: Request, res: Response) => {
-    try{
-        const id = Number(req.params.id)
-        const serviceResult = await ordersService.deleteOrder(id)
-        res.json(serviceResult)
-    } catch(err){
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
-    }
+    const id = Number(req.params.id)
+    const serviceResult = await ordersService.deleteOrder(id)
+    res.json(serviceResult)
 }
 
 export const updateOrder = async (req: Request, res: Response) => {
-    try{
-        const id = Number(req.params.id)
-        const body: UpdateOrderStatusRequestDto = req.body
-        const serviceResult = await ordersService.updateOrder(id, body.status)
-        res.json(serviceResult)
-    } catch(err){
-        throw new NotFoundException('Product not found.', ErrorCode.USER_NOT_FOUND)
-    }
+    const id = Number(req.params.id)
+    const body: UpdateOrderStatusRequestDto = req.body
+    const serviceResult = await ordersService.updateOrder(id, body.status)
+    res.json(serviceResult)
 }

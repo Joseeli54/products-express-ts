@@ -89,12 +89,12 @@ paths:
                                     "message": "The user is logged successfully",
                                     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3MjQ2MDQ1MzR9.26HJ9N1sLRDruFy_dL2FKnGxUtUPGXWqHZMt77HSJ1U"
                                 }
-          507:
-            description: "The request was not successful due to an error in data validation."
-          502:
-            description: "The request was not successful because the password was incorrect."
+          401:
+            description: "The request was not rejected, because the password user is incorrect."
           404:
             description: "The request was invalid because the user was found."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
   /api/auth/signup:
@@ -155,10 +155,8 @@ paths:
                                     },
                                     "message": "User created successfully"
                                 }
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a user already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
   /api/profile/:
@@ -196,10 +194,10 @@ paths:
                                   "createdAt": "2024-08-25T16:48:06.548Z",
                                   "updatedAt": "2024-08-25T16:48:06.548Z"
                               }
-          500:
-            description: "The request was not successful because there was an unexpected error."
           401:
             description: "The request was not rejected, because the user does not have permissions or is not authenticated."
+          500:
+            description: "The request was not successful because there was an unexpected error."
   /api/products/:
     post:
       description: Endpoint used for creating a product **(Only Admin)**. For this endpoint, the token generated in the login functionality must be sent **(The token must belong to a administrator user, you can use seeds users)**, so that the system knows the identity of the user making the request.
@@ -257,10 +255,8 @@ paths:
                     message:
                       type: "string"
                       example: "Product created successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a product already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the product was found."
           500:
@@ -401,10 +397,8 @@ paths:
                     message:
                       type: "string"
                       example: "Product updated successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a product already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the product was found."
           500:
@@ -444,10 +438,8 @@ paths:
                     message:
                       type: "string"
                       example: "Product deleted successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          505:
-            description: "The request was not successful, due to a conflict when deleting it. It may be that there is another record that depends on it."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the product was found."
           500:
@@ -498,10 +490,8 @@ paths:
                                     "message": "Product obtain successfully"
                                   }
                                 }
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a product already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
           401:
@@ -560,10 +550,8 @@ paths:
                     message:
                       type: "string"
                       example: "Order created successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a order already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the order was found."
           500:
@@ -634,6 +622,8 @@ paths:
                                   }
                                 ]
                               }
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
           401:
@@ -709,6 +699,8 @@ paths:
                                       }
                                   ]
                               }
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
           401:
@@ -778,6 +770,8 @@ paths:
                                       }
                                   ]
                               }
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
           401:
@@ -887,10 +881,8 @@ paths:
                     message:
                       type: "string"
                       example: "Order updated successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a order already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the order was found."
           500:
@@ -930,10 +922,8 @@ paths:
                     message:
                       type: "string"
                       example: "Order deleted successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          505:
-            description: "The request was not successful, due to a conflict when deleting it. It may be that there is another record that depends on it."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the order was found."
           500:
@@ -997,10 +987,8 @@ paths:
                     message:
                       type: "string"
                       example: "User created successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a user already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the user was found."
           500:
@@ -1122,10 +1110,8 @@ paths:
                                     "createdAt": "2024-08-25T14:52:52.509Z",
                                     "updatedAt": "2024-08-25T14:52:52.509Z"
                                 }
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a user already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
           401:
@@ -1192,10 +1178,8 @@ paths:
                     message:
                       type: "string"
                       example: "User updated successfully"
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a user already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           404:
             description: "The request was invalid because the user was found."
           500:
@@ -1239,10 +1223,8 @@ paths:
                                     "createdAt": "2024-08-25T14:52:52.509Z",
                                     "updatedAt": "2024-08-25T14:52:52.509Z"
                                 }
-          507:
-            description: "The request was not successful due to an error in data validation."
-          501:
-            description: "The request was not successful, because a user already exists."
+          422:
+            description: "The request could not be made due to a validation error, data formatting, conflicts with other data, or the information already exists."
           500:
             description: "The request was not successful because there was an unexpected error."
           401:
