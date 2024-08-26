@@ -1,12 +1,8 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { loginService } from '../services/Auth/login.service';
-import { signUpService } from '../services/Auth/signup.service';
 import { beforeEach } from 'node:test';
 import { usersRepository } from '../repositories/users.repository';
 import { Role } from '../types/roles.model';
 import { hashSync } from 'bcrypt';
-import { usersService } from '../services/users.service';
-import { UpdateUserDto } from '../interfaces/dto/users/update-user-dto.interface';
 
 let user = {
     name: "Jose",

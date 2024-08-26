@@ -1,5 +1,4 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { ordersService } from '../services/orders.service';
 import { ordersRepository } from '../repositories/orders.repository';
 
 const dataInvalid : any = {
