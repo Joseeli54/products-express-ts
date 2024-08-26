@@ -1,7 +1,5 @@
-import { compareSync } from "bcrypt"
 import { ErrorCode } from "../../exceptions/root.exception"
 import { Result } from "../../interfaces/results/results.interface"
-import { prismaClient } from "../../server"
 import { Errors } from "../../types/errors.model"
 import * as jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "../../secrets"

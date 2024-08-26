@@ -1,15 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { prismaClient } from "../server";
-import { ProductSchema } from "../schema/products.schema";
-import { NotFoundException } from "../exceptions/not-found.exception";
-import { ErrorCode, HttpException } from "../exceptions/root.exception";
 import { productsService } from "../services/products.service";
 import { GetListProductsResponseDto } from "../interfaces/dto/products/get-list-products-dto.interface";
 import { CreateProductRequestDto } from "../interfaces/dto/products/create-product-dto.interface";
 import { UpdateProductRequestDto } from "../interfaces/dto/products/update-product-dto.interface";
 import { GetProductByIdResponseDto } from "../interfaces/dto/products/get-product-by-id-dto.interface";
-import { InternalException } from "../exceptions/internal-exception.exception";
-import { Errors } from "../types/errors.model";
 
 export const listProduct = async (req: Request, res: Response, next: NextFunction) => {
     const page = Number(req.query.page)

@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
-import { OrderSchema } from "../schema/orders.schema";
 import { CreateOrderDto } from "../interfaces/dto/orders/create-order-dto.interface";
 import { ordersService } from "../services/orders.service";
-import { ErrorCode } from "../exceptions/root.exception";
-import { NotFoundException } from "../exceptions/not-found.exception";
 import { GetOrdersListDto } from "../interfaces/dto/orders/get-orders-list-dto.interface";
 import { GetOrderDto } from "../interfaces/dto/orders/get-order-dto.interface";
 import { UpdateOrderStatusRequestDto } from "../interfaces/dto/orders/update-order-dto.interface";

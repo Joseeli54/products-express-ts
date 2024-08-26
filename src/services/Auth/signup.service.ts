@@ -10,7 +10,6 @@ import { SignUpSchema } from "../../schema/users.schema"
 import { InternalException } from "../../exceptions/internal-exception.exception"
 import { sendMail } from "../../mailer/mailer"
 import { UnprocessableEntity } from "../../exceptions/validation.exception"
-import { NotFoundException } from "../../exceptions/not-found.exception"
 
 async function signUp(data: Omit<User, 'id' | 'password' | 'role'>, password: string): Promise<Result<any>> {
     //Create de user with the name, email and password

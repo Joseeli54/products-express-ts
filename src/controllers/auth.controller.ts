@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { loginService } from "../services/Auth/login.service";
 import { signUpService } from "../services/Auth/signup.service";
-import { UnauthorizedException } from "../exceptions/unauthorized.exception";
-import { ErrorCode } from "../exceptions/root.exception";
 
 export const signup = async (req: Request, res: Response) => {
     const { password } = req.body
